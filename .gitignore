@@ -1,0 +1,15 @@
+# Directories
+/.cache
+/.clangd
+/.vscode
+/build
+/dwarfdungeon/.godot
+/dwarfdungeon/.import
+
+# Specific files
+/dwarfdungeon/bin/*.dll*
+extension_api.json
+CMakeUserPresets.json
+
+# Extensions
+*.obj
