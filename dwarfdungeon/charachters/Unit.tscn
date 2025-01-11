@@ -7,7 +7,12 @@
 size = Vector2(32, 32)
 
 [node name="Unit" type="CharacterBody2D"]
+collision_mask = 2
 script = ExtResource("1_lorbv")
+Speed = null
+StartMovingTime = null
+StopMovingTime = null
+DecelerationDistance = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 z_index = 1
