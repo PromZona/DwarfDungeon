@@ -39,7 +39,7 @@ func get_final_velocity() -> Vector2:
 func _init() -> void:
 	pass
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	queue_redraw()
 	return
 

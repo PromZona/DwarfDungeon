@@ -13,7 +13,7 @@ size = Vector2(119, 121)
 Speed = 100.0
 Units = [NodePath("../Unit"), NodePath("../Unit2"), NodePath("../Unit3"), NodePath("../Unit4")]
 
-[node name="Camera2D" type="Camera2D" parent="Group"]
+[node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-10.5, -38)
 zoom = Vector2(2, 2)
 

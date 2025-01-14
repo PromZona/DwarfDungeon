@@ -4,11 +4,9 @@ extends Node2D
 @export var Speed: float = 50.0
 @export var Units: Array[Unit] = []
 
-@onready var default_font = ThemeDB.fallback_font
-@onready var default_font_size = ThemeDB.fallback_font_size
-	
-enum GroupState {GroupIdle, GroupMoving, GroupAttack}
+@onready var Camera: Camera2D = get_viewport().get_camera_2d()
 
+enum GroupState {GroupIdle, GroupMoving, GroupAttack}
 var Positions: Array[Marker2D] = []
 var CurrentState: GroupState = GroupState.GroupIdle
 var GroupCenter: Vector2 = Vector2.ZERO
@@ -25,11 +23,6 @@ func _ready() -> void:
 		i += 1
 	return
 
-func notify_unit_moving():
-	for unit: Unit in Units:
-		unit.start_moving()
-	return
-
 func _input(event: InputEvent) -> void:
 	var is_moving: bool = false
 	is_moving = is_moving || event.is_action_pressed("move_left")
@@ -43,6 +36,20 @@ func _input(event: InputEvent) -> void:
 		return
 	return
 
+func _process(delta: float) -> void:
+	if CurrentState == GroupState.GroupMoving:
+		move(delta)
+	rotate_with_mouse()
+	return
+
+func _draw() -> void:
+	return
+
+func notify_unit_moving():
+	for unit: Unit in Units:
+		unit.start_moving()
+	return
+
 func group_center(unit_positions: Array[Vector2]) -> Vector2:
 	assert(unit_positions.size() == 4)
 	var pair1: Vector2 = (unit_positions[0] + unit_positions[1]) / 2
@@ -50,7 +57,7 @@ func group_center(unit_positions: Array[Vector2]) -> Vector2:
 	var result: Vector2 = (pair1 + pair2) / 2
 	return result
 
-func move(delta: float) -> void:
+func move(_delta: float) -> void:
 	var direction: Vector2 = Vector2.ZERO
 	if Input.is_action_pressed("move_left"):
 		direction.x -= 1.0
@@ -76,11 +83,9 @@ func move(delta: float) -> void:
 func attack():
 	pass
 
-
-func _process(delta: float) -> void:
-	if CurrentState == GroupState.GroupMoving:
-		move(delta)
+func rotate_with_mouse() -> void:
+	var mouse_pos: Vector2 = Camera.get_global_mouse_position()
+	look_at(mouse_pos)
 	return
 
-func _draw() -> void:
-	return
+
