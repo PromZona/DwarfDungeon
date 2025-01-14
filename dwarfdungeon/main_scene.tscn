@@ -10,7 +10,7 @@ size = Vector2(119, 121)
 [node name="main_scene" type="Node2D"]
 
 [node name="Group" parent="." node_paths=PackedStringArray("Units") instance=ExtResource("2_uci2j")]
-Speed = 80.0
+Speed = 100.0
 Units = [NodePath("../Unit"), NodePath("../Unit2"), NodePath("../Unit3"), NodePath("../Unit4")]
 
 [node name="Camera2D" type="Camera2D" parent="Group"]
@@ -19,15 +19,31 @@ zoom = Vector2(2, 2)
 
 [node name="Unit4" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(72, 67)
+Speed = 60
+StartMovingTime = 1.0
+StopMovingTime = 1.0
+DecelerationDistance = 50.0
 
 [node name="Unit3" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(-175, 45)
+Speed = 40
+StartMovingTime = 1.0
+StopMovingTime = 1.0
+DecelerationDistance = 50.0
 
 [node name="Unit2" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(108, -91)
+Speed = 70
+StartMovingTime = 1.0
+StopMovingTime = 1.0
+DecelerationDistance = 50.0
 
 [node name="Unit" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(-8, -144)
+Speed = 45
+StartMovingTime = 1.0
+StopMovingTime = 1.0
+DecelerationDistance = 50.0
 
 [node name="obstacle" type="StaticBody2D" parent="."]
 position = Vector2(-186.5, -93.5)

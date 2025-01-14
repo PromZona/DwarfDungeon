@@ -11,6 +11,7 @@ enum GroupState {GroupIdle, GroupMoving, GroupAttack}
 
 var Positions: Array[Marker2D] = []
 var CurrentState: GroupState = GroupState.GroupIdle
+var GroupCenter: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	Positions.append($Position1)
@@ -42,6 +43,13 @@ func _input(event: InputEvent) -> void:
 		return
 	return
 
+func group_center(unit_positions: Array[Vector2]) -> Vector2:
+	assert(unit_positions.size() == 4)
+	var pair1: Vector2 = (unit_positions[0] + unit_positions[1]) / 2
+	var pair2: Vector2 = (unit_positions[2] + unit_positions[3]) / 2
+	var result: Vector2 = (pair1 + pair2) / 2
+	return result
+
 func move(delta: float) -> void:
 	var direction: Vector2 = Vector2.ZERO
 	if Input.is_action_pressed("move_left"):
@@ -56,7 +64,13 @@ func move(delta: float) -> void:
 	if direction.is_zero_approx():
 		CurrentState = GroupState.GroupIdle
 
-	position += direction.normalized() * Speed * delta
+	direction = direction.normalized()
+	var unit_positions: Array[Vector2] = []
+	for unit: Unit in Units:
+		unit.setGroupForceDirection(direction)
+		unit_positions.append(unit.global_position)
+	var target_position:Vector2 = group_center(unit_positions)
+	position = target_position
 	return
 
 func attack():
@@ -66,18 +80,7 @@ func attack():
 func _process(delta: float) -> void:
 	if CurrentState == GroupState.GroupMoving:
 		move(delta)
-	queue_redraw()
 	return
 
 func _draw() -> void:
-	# var str_pos: Vector2  = Vector2(-80, -120)
-	# var str_format_state: String = "State: %s"
-	# var str_format_move_state: String = "MoveState: %s"
-	# for unit: Unit in Units:
-	#	var text: String = str_format_state % unit.State.keys()[unit.state]
-	#	draw_string(default_font, str_pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, default_font_size)
-	#	str_pos.y += 20
-	#	text = str_format_move_state % unit.MoveState.keys()[unit.move_state]
-	#	draw_string(default_font, str_pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, default_font_size)
-	#	str_pos.y += 50
 	return

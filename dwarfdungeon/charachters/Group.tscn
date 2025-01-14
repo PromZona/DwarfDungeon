@@ -9,17 +9,18 @@ size = Vector2(10, 10)
 script = ExtResource("1_w71aj")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
 [node name="Position1" type="Marker2D" parent="."]
-position = Vector2(50, 50)
+position = Vector2(28, 29)
 
 [node name="Position2" type="Marker2D" parent="."]
-position = Vector2(-50, 50)
+position = Vector2(-38, 34)
 
 [node name="Position3" type="Marker2D" parent="."]
-position = Vector2(-50, -50)
+position = Vector2(-25, -27)
 
 [node name="Position4" type="Marker2D" parent="."]
-position = Vector2(50, -50)
+position = Vector2(23, -18)

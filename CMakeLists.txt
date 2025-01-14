@@ -16,9 +16,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
                       OUTPUT_NAME   ${PROJECT_NAME}.$<LOWER_CASE:$<PLATFORM_ID>>.template_$<LOWER_CASE:$<CONFIG>>.x86_64
 )
 
-# Flags for linking depending library statically
+# Flags for linking depending library statically for Windows
 # https://github.com/godotengine/godot/issues/84160
-target_link_options(${PROJECT_NAME} PRIVATE -static -static-libgcc -static-libstdc++)
+if (WIN32)
+	target_link_options(${PROJECT_NAME} PRIVATE -static -static-libgcc -static-libstdc++)
+endif()
 
 target_link_libraries(${PROJECT_NAME} godot-cpp)
 

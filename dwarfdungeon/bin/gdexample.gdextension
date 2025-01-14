@@ -6,7 +6,11 @@ reloadable = true
 
 [libraries]
 
-windows.debug.x86_32 = "res://bin/libgdexample.windows.template_debug.x86_32.dll"
-windows.release.x86_32 = "res://bin/libgdexample.windows.template_release.x86_32.dll"
+windows.debug.x86_32 = "res://bin/libDwarfDungeon.windows.template_debug.x86_32.dll"
+windows.release.x86_32 = "res://bin/libDwarfDungeon.windows.template_release.x86_32.dll"
 windows.debug.x86_64 = "res://bin/libDwarfDungeon.windows.template_debug.x86_64.dll"
-windows.release.x86_64 = "res://bin/libgdexample.windows.template_release.x86_64.dll"
+windows.release.x86_64 = "res://bin/libDwarfDungeon.windows.template_release.x86_64.dll"
+linux.debug.x86_32 = "res://bin/libDwarfDungeon.linux.template_debug.x86_32.so"
+linux.release.x86_32 = "res://bin/libDwarfDungeon.linux.template_release.x86_32.so"
+linux.debug.x86_64 = "res://bin/libDwarfDungeon.linux.template_debug.x86_64.so"
+linux.release.x86_64 = "res://bin/libDwarfDungeon.linux.template_release.x86_64.so"

@@ -13,3 +13,4 @@ CMakeUserPresets.json
 
 # Extensions
 *.obj
+*.so
