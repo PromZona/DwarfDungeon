@@ -52,6 +52,13 @@ func update_move_state(delta: float) -> void:
 		return
 
 
+func get_final_velocity() -> Vector2:
+	var result: Vector2 = Vector2.ZERO
+	# group force
+	# formation force
+	# unit force
+	return result
+
 func _init() -> void:
 	pass
 
@@ -82,6 +89,7 @@ func _draw() -> void:
 	if move_state == MoveState.Deceleration:
 		color = Color.RED
 	draw_string(default_font, Vector2(-15, 40), MoveState.keys()[move_state], HORIZONTAL_ALIGNMENT_LEFT, -1, 10, color)
+	draw_line(Vector2(0, 0), Vector2(100,100),Color.GREEN) 
 	return
 
 func start_moving() -> void:

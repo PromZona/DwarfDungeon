@@ -1,13 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://c2rdv57n283at"]
+[gd_scene load_steps=5 format=3 uid="uid://c2rdv57n283at"]
 
 [ext_resource type="PackedScene" uid="uid://chym3vdoe3mpi" path="res://charachters/Unit.tscn" id="1_1p7cj"]
 [ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="2_7i657"]
 [ext_resource type="PackedScene" uid="uid://dpd2w5jp63a4r" path="res://charachters/Group.tscn" id="2_uci2j"]
-
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_jnuye"]
-vertices = PackedVector2Array(253.383, -169.25, 264.578, 105.859, 33.0078, 103, 153.398, -172.008, -31.4063, -188.992, -276.219, 105.898, -282.773, -186.109)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 3, 2, 5, 6)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(154, -182, 263, -179, 275, 116, 33, 113, -286, 116, -293, -196, -31, -199)])
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cogig"]
 size = Vector2(119, 121)
@@ -34,9 +29,6 @@ position = Vector2(108, -91)
 [node name="Unit" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(-8, -144)
 
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
-navigation_polygon = SubResource("NavigationPolygon_jnuye")
-
 [node name="obstacle" type="StaticBody2D" parent="."]
 position = Vector2(-186.5, -93.5)
 
@@ -47,10 +39,6 @@ texture = ExtResource("2_7i657")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="obstacle"]
 position = Vector2(-1.5, 2.5)
 shape = SubResource("RectangleShape2D_cogig")
-
-[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="obstacle"]
-radius = 82.5
-vertices = PackedVector2Array(-61.5, -60.5, -60.5, 61.5, 58.5, 62.5, 59.5, 7.5, 58.5, -59.5)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 position = Vector2(-186.5, -93.5)
