@@ -10,11 +10,19 @@ extends CharacterBody2D
 @export var FormationMaxSpeedCoefficient: float = 2.0
 
 @onready var DefaultFont = ThemeDB.fallback_font
+@onready var PersonalSpaceArea: Area2D = $GroupMemberCollision
 
 enum State {Idle, Move, Attack}
 var CurrentState : State = State.Idle
 var Target: Marker2D
 var GroupForceDirection: Vector2 = Vector2.ZERO 
+var GroupUnitsTooClose: Array[Area2D] = []
+var PersonalSpaceRadius: float
+
+func _ready() -> void:
+	var colshape2d: CollisionShape2D = PersonalSpaceArea.get_child(0)
+	PersonalSpaceRadius = (colshape2d.shape as CircleShape2D).radius
+	return
 
 func _process(_delta: float) -> void:
 	queue_redraw()
@@ -38,11 +46,21 @@ func formation_velocity() -> Vector2:
 
 	var distance_normilized: float = smoothstep(0, FormationMaxSpeedDistance, distance)	# linear [0; FormationMaxSpeedDistance] -> [0; 1]
 	distance_normilized = clampf(distance_normilized, FormationMinSpeedCoefficient, 1.0)	# clamp  [0; 1] -> [FormationMinSpeedCoefficient; 1] 
-	var distance_velocity: float = lerpf(0.0, Speed * FormationMaxSpeedCoefficient, distance_normilized) # [0.1; 1] -> [0.0; Speed] 
-	return direction * distance_velocity
+	var magnitude: float = lerpf(0.0, Speed * FormationMaxSpeedCoefficient, distance_normilized) # [0.1; 1] -> [0.0; Speed] 
+	return direction * magnitude
 
 func group_velocity() -> Vector2:
 	return GroupForceDirection * Speed
+
+func group_units_velocity() -> Vector2:
+	var result: Vector2 = Vector2.ZERO
+	for area: Area2D in GroupUnitsTooClose:
+		var opposite_dir: Vector2 = -1 * PersonalSpaceArea.global_position.direction_to(area.global_position)
+		var distance_to_area: float = PersonalSpaceArea.global_position.distance_to(area.global_position)
+		var distance_normilized: float = 1.0 - smoothstep(0, 2 * PersonalSpaceRadius, distance_to_area) # [0; 2*Radius] -> [1; 0]
+		var magnitude: float =  lerpf(0.0, Speed * 0.2, distance_normilized)
+		result += opposite_dir * magnitude
+	return result
 
 func get_final_velocity() -> Vector2:
 	# group force
@@ -50,11 +68,22 @@ func get_final_velocity() -> Vector2:
 	# formation force
 	result += formation_velocity()
 	# unit force TODO:
-	
+	result += group_units_velocity()
 	return result
 
 func SetTarget(marker: Marker2D) -> void:
 	Target = marker
+	return
 
 func SetGroupForceDirection(direction: Vector2) -> void:
 	GroupForceDirection = direction
+	return
+
+
+func _on_group_member_collision_area_entered(area: Area2D) -> void:
+	GroupUnitsTooClose.append(area)
+	return
+
+func _on_group_member_collision_area_exited(area: Area2D) -> void:
+	GroupUnitsTooClose.erase(area)
+	return

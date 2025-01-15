@@ -78,4 +78,3 @@ func rotate_with_mouse() -> void:
 	var mouse_pos: Vector2 = Camera.get_global_mouse_position()
 	look_at(mouse_pos)
 	return
-

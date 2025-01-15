@@ -1,10 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://chym3vdoe3mpi"]
+[gd_scene load_steps=5 format=3 uid="uid://chym3vdoe3mpi"]
 
 [ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="1_8gimr"]
 [ext_resource type="Script" path="res://scripts/Unit.gd" id="1_lorbv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qmh3a"]
 size = Vector2(32, 32)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_n8vhh"]
+radius = 16.0
 
 [node name="Unit" type="CharacterBody2D"]
 collision_mask = 2
@@ -22,3 +25,14 @@ shape = SubResource("RectangleShape2D_qmh3a")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("1_8gimr")
+
+[node name="GroupMemberCollision" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GroupMemberCollision"]
+shape = SubResource("CircleShape2D_n8vhh")
+debug_color = Color(0.888025, 0.258221, 0.521158, 0.42)
+
+[connection signal="area_entered" from="GroupMemberCollision" to="." method="_on_group_member_collision_area_entered"]
+[connection signal="area_exited" from="GroupMemberCollision" to="." method="_on_group_member_collision_area_exited"]

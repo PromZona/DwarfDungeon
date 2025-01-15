@@ -29,14 +29,14 @@ FormationMaxSpeedCoefficient = 3.0
 
 [node name="Unit3" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(-175, 45)
-Speed = 40
+Speed = 45
 FormationCloseEnoughDistance = 10.0
 FormationMinSpeedCoefficient = 0.3
 FormationMaxSpeedCoefficient = 3.0
 
 [node name="Unit2" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(108, -91)
-Speed = 70
+Speed = 60
 FormationCloseEnoughDistance = 10.0
 FormationMinSpeedCoefficient = 0.3
 
