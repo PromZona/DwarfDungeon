@@ -13,28 +13,28 @@ scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
 [node name="Position1" type="Marker2D" parent="."]
-position = Vector2(28, 29)
+position = Vector2(31, 0)
 
 [node name="Sprite2D2" type="Sprite2D" parent="Position1"]
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
 [node name="Position2" type="Marker2D" parent="."]
-position = Vector2(-38, 34)
+position = Vector2(25, 43)
 
 [node name="d" type="Sprite2D" parent="Position2"]
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
 [node name="Position3" type="Marker2D" parent="."]
-position = Vector2(-25, -27)
+position = Vector2(-49, 0)
 
 [node name="d2" type="Sprite2D" parent="Position3"]
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
 [node name="Position4" type="Marker2D" parent="."]
-position = Vector2(23, -18)
+position = Vector2(24, -35)
 
 [node name="d3" type="Sprite2D" parent="Position4"]
 scale = Vector2(0.1, 0.1)

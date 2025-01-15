@@ -10,9 +10,10 @@ size = Vector2(32, 32)
 collision_mask = 2
 script = ExtResource("1_lorbv")
 Speed = null
-StartMovingTime = null
-StopMovingTime = null
-DecelerationDistance = null
+FormationCloseEnoughDistance = null
+FormationMaxSpeedDistance = null
+FormationMinSpeedCoefficient = null
+FormationMaxSpeedCoefficient = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 z_index = 1

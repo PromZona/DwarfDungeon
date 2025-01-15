@@ -23,30 +23,29 @@ GroupToFollow = NodePath("../Group")
 [node name="Unit4" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(72, 67)
 Speed = 60
-StartMovingTime = 1.0
-StopMovingTime = 1.0
-DecelerationDistance = 50.0
+FormationCloseEnoughDistance = 10.0
+FormationMinSpeedCoefficient = 0.3
+FormationMaxSpeedCoefficient = 3.0
 
 [node name="Unit3" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(-175, 45)
 Speed = 40
-StartMovingTime = 1.0
-StopMovingTime = 1.0
-DecelerationDistance = 50.0
+FormationCloseEnoughDistance = 10.0
+FormationMinSpeedCoefficient = 0.3
+FormationMaxSpeedCoefficient = 3.0
 
 [node name="Unit2" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(108, -91)
 Speed = 70
-StartMovingTime = 1.0
-StopMovingTime = 1.0
-DecelerationDistance = 50.0
+FormationCloseEnoughDistance = 10.0
+FormationMinSpeedCoefficient = 0.3
 
 [node name="Unit" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(-8, -144)
 Speed = 45
-StartMovingTime = 1.0
-StopMovingTime = 1.0
-DecelerationDistance = 50.0
+FormationCloseEnoughDistance = 10.0
+FormationMinSpeedCoefficient = 0.3
+FormationMaxSpeedCoefficient = 3.0
 
 [node name="obstacle" type="StaticBody2D" parent="."]
 position = Vector2(-186.5, -93.5)

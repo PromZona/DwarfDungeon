@@ -1,12 +1,15 @@
 class_name Unit
 extends CharacterBody2D
 
+@export_group("Movement")
 @export var Speed: int = 50
-@export var StartMovingTime: float = 1.0
-@export var StopMovingTime: float = 1.0
-@export var DecelerationDistance: float = 50.0
+@export_subgroup("Fomation", "Formation")
+@export var FormationCloseEnoughDistance: float = 20.0
+@export var FormationMaxSpeedDistance: float = 500.0
+@export_range(0, 1, 0.05) var FormationMinSpeedCoefficient: float = 0.1
+@export var FormationMaxSpeedCoefficient: float = 2.0
 
-@onready var default_font = ThemeDB.fallback_font
+@onready var DefaultFont = ThemeDB.fallback_font
 
 enum State {Idle, Move, Attack}
 var CurrentState : State = State.Idle
@@ -22,19 +25,20 @@ func _physics_process(delta: float) -> void:
 	return
 
 func _draw() -> void:
-	draw_string(default_font, Vector2(-20, 35), "g: %.1v" % group_velocity(), HORIZONTAL_ALIGNMENT_FILL, -1, 9, Color.WHITE)
-	draw_string(default_font, Vector2(-20, 48), "f: %.1v" % formation_velocity(), HORIZONTAL_ALIGNMENT_FILL, -1, 9, Color.WHITE)
+	# draw_string(DefaultFont, Vector2(-20, 35), "g: %.1v" % group_velocity(), HORIZONTAL_ALIGNMENT_FILL, -1, 9, Color.WHITE)
+	# draw_string(DefaultFont, Vector2(-20, 48), "f: %.1v" % formation_velocity(), HORIZONTAL_ALIGNMENT_FILL, -1, 9, Color.WHITE)
 	return
 
 func formation_velocity() -> Vector2:
 	var direction: Vector2 = global_position.direction_to(Target.global_position)
 	var distance: float = global_position.distance_to(Target.global_position)
 	
-	if distance < 20: # If close "enough", remove jittering around
+	if distance < FormationCloseEnoughDistance: # If close "enough", remove jittering around
 		return Vector2.ZERO
 
-	var distance_normilized: float = clampf(smoothstep(0, 500, distance), 0.1, 1.0) # [0; 1]
-	var distance_velocity: float = lerpf(0.0, 200.0, distance_normilized)
+	var distance_normilized: float = smoothstep(0, FormationMaxSpeedDistance, distance)	# linear [0; FormationMaxSpeedDistance] -> [0; 1]
+	distance_normilized = clampf(distance_normilized, FormationMinSpeedCoefficient, 1.0)	# clamp  [0; 1] -> [FormationMinSpeedCoefficient; 1] 
+	var distance_velocity: float = lerpf(0.0, Speed * FormationMaxSpeedCoefficient, distance_normilized) # [0.1; 1] -> [0.0; Speed] 
 	return direction * distance_velocity
 
 func group_velocity() -> Vector2:
@@ -46,6 +50,7 @@ func get_final_velocity() -> Vector2:
 	# formation force
 	result += formation_velocity()
 	# unit force TODO:
+	
 	return result
 
 func SetTarget(marker: Marker2D) -> void:
