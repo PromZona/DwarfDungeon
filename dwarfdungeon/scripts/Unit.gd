@@ -33,7 +33,10 @@ func _physics_process(delta: float) -> void:
 	return
 
 func _draw() -> void:
-	# draw_string(DefaultFont, Vector2(-20, 35), "g: %.1v" % group_velocity(), HORIZONTAL_ALIGNMENT_FILL, -1, 9, Color.WHITE)
+	# draw_line(Vector2.ZERO, formation_velocity(), Color.RED)
+	# draw_line(Vector2.ZERO, group_units_velocity(), Color.GREEN)
+	# draw_line(Vector2.ZERO, group_velocity(), Color.MAGENTA)
+	# draw_string(DefaultFont, Vector2(-20, 35), "dist: %.1f" % global_position.distance_to(Target.global_position), HORIZONTAL_ALIGNMENT_FILL, -1, 9, Color.WHITE)
 	# draw_string(DefaultFont, Vector2(-20, 48), "f: %.1v" % formation_velocity(), HORIZONTAL_ALIGNMENT_FILL, -1, 9, Color.WHITE)
 	return
 
@@ -64,10 +67,12 @@ func group_units_velocity() -> Vector2:
 
 func get_final_velocity() -> Vector2:
 	# group force
-	var result: Vector2 = group_velocity() # TODO: Make group coef common
+	var result: Vector2 = group_velocity()
+
 	# formation force
 	result += formation_velocity()
-	# unit force TODO:
+	
+	# unit force
 	result += group_units_velocity()
 	return result
 
