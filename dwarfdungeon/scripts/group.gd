@@ -19,7 +19,7 @@ func _ready() -> void:
 	
 	var i: int = 0
 	for unit: Unit in Units:
-		unit.setTarget(Positions[i])
+		unit.SetTarget(Positions[i])
 		i += 1
 	return
 
@@ -32,7 +32,6 @@ func _input(event: InputEvent) -> void:
 
 	if CurrentState == GroupState.GroupIdle && is_moving:
 		CurrentState = GroupState.GroupMoving
-		notify_unit_moving()
 		return
 	return
 
@@ -43,11 +42,6 @@ func _process(delta: float) -> void:
 	return
 
 func _draw() -> void:
-	return
-
-func notify_unit_moving():
-	for unit: Unit in Units:
-		unit.start_moving()
 	return
 
 func group_center(unit_positions: Array[Vector2]) -> Vector2:
@@ -74,18 +68,14 @@ func move(_delta: float) -> void:
 	direction = direction.normalized()
 	var unit_positions: Array[Vector2] = []
 	for unit: Unit in Units:
-		unit.setGroupForceDirection(direction)
+		unit.SetGroupForceDirection(direction)
 		unit_positions.append(unit.global_position)
 	var target_position:Vector2 = group_center(unit_positions)
 	position = target_position
 	return
 
-func attack():
-	pass
-
 func rotate_with_mouse() -> void:
 	var mouse_pos: Vector2 = Camera.get_global_mouse_position()
 	look_at(mouse_pos)
 	return
-
 
