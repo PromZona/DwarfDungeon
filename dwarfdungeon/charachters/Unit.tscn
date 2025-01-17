@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://chym3vdoe3mpi"]
+[gd_scene load_steps=11 format=3 uid="uid://chym3vdoe3mpi"]
 
 [ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="1_8gimr"]
 [ext_resource type="Script" path="res://scripts/Unit.gd" id="1_lorbv"]
+[ext_resource type="Texture2D" uid="uid://chnoj122dqx4b" path="res://assets/fx/swrod_fx.png" id="3_253o4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qmh3a"]
 size = Vector2(32, 32)
@@ -9,14 +10,91 @@ size = Vector2(32, 32)
 [sub_resource type="CircleShape2D" id="CircleShape2D_n8vhh"]
 radius = 16.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xy0eh"]
+size = Vector2(40, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wih0m"]
+atlas = ExtResource("3_253o4")
+
+[sub_resource type="Animation" id="Animation_tu0db"]
+resource_name = "Attack"
+length = 0.333337
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AttackAreaHandler/AttackFx:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.333333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackAreaHandler/AttackFx:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.0666667, 0.133333, 0.2, 0.266667, 0.333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.133333),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"apply_damage"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_ciafn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AttackAreaHandler/AttackFx:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackAreaHandler/AttackFx:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_rnpmc"]
+_data = {
+"Attack": SubResource("Animation_tu0db"),
+"RESET": SubResource("Animation_ciafn")
+}
+
 [node name="Unit" type="CharacterBody2D"]
 collision_mask = 2
 script = ExtResource("1_lorbv")
-Speed = null
-FormationCloseEnoughDistance = null
-FormationMaxSpeedDistance = null
-FormationMinSpeedCoefficient = null
-FormationMaxSpeedCoefficient = null
+Damage = 5.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 z_index = 1
@@ -33,6 +111,28 @@ collision_mask = 4
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GroupMemberCollision"]
 shape = SubResource("CircleShape2D_n8vhh")
 debug_color = Color(0.888025, 0.258221, 0.521158, 0.42)
+
+[node name="AttackAreaHandler" type="Node2D" parent="."]
+
+[node name="AttackArea" type="ShapeCast2D" parent="AttackAreaHandler"]
+self_modulate = Color(0.8, 0.266667, 0.211765, 1)
+position = Vector2(20, 0)
+shape = SubResource("RectangleShape2D_xy0eh")
+target_position = Vector2(0, 0)
+
+[node name="AttackFx" type="Sprite2D" parent="AttackAreaHandler"]
+visible = false
+texture_filter = 1
+position = Vector2(21, -0.999999)
+rotation = 0.785398
+scale = Vector2(3, 3)
+texture = SubResource("AtlasTexture_wih0m")
+hframes = 6
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_rnpmc")
+}
 
 [connection signal="area_entered" from="GroupMemberCollision" to="." method="_on_group_member_collision_area_entered"]
 [connection signal="area_exited" from="GroupMemberCollision" to="." method="_on_group_member_collision_area_exited"]

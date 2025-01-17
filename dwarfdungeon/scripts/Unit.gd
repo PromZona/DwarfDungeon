@@ -1,6 +1,7 @@
 class_name Unit
 extends CharacterBody2D
 
+@export var Damage: float = 2.0
 @export_group("Movement")
 @export var Speed: int = 50
 @export_subgroup("Fomation", "Formation")
@@ -11,6 +12,9 @@ extends CharacterBody2D
 
 @onready var DefaultFont = ThemeDB.fallback_font
 @onready var PersonalSpaceArea: Area2D = $GroupMemberCollision
+@onready var AttackArea: ShapeCast2D = $AttackAreaHandler/AttackArea
+@onready var AttackAreaHandler: Node2D = $AttackAreaHandler
+@onready var AnimPlayer: AnimationPlayer = $AnimationPlayer
 
 enum State {Idle, Move, Attack}
 var CurrentState : State = State.Idle
@@ -84,6 +88,19 @@ func SetGroupForceDirection(direction: Vector2) -> void:
 	GroupForceDirection = direction
 	return
 
+func apply_damage() -> void:
+	AttackArea.force_shapecast_update()
+	var collisions: Array = AttackArea.collision_result # Thank you godot for static typing
+	for col in collisions:
+		var enemy: Enemy = col.collider as Enemy
+		if enemy:
+			enemy.DealDamage(Damage)
+	return
+
+func Attack(direction: Vector2) -> void:
+	AttackAreaHandler.look_at(direction)
+	AnimPlayer.play("Attack")
+	return
 
 func _on_group_member_collision_area_entered(area: Area2D) -> void:
 	GroupUnitsTooClose.append(area)

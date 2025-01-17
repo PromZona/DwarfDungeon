@@ -16,6 +16,7 @@ texture = SubResource("PlaceholderTexture2D_yrpif")
 position = Vector2(49, 0)
 
 [node name="Sprite2D2" type="Sprite2D" parent="Position1"]
+visible = false
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
@@ -23,6 +24,7 @@ texture = SubResource("PlaceholderTexture2D_yrpif")
 position = Vector2(26, 48)
 
 [node name="d" type="Sprite2D" parent="Position2"]
+visible = false
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
@@ -30,6 +32,7 @@ texture = SubResource("PlaceholderTexture2D_yrpif")
 position = Vector2(-49, 0)
 
 [node name="d2" type="Sprite2D" parent="Position3"]
+visible = false
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
@@ -37,5 +40,6 @@ texture = SubResource("PlaceholderTexture2D_yrpif")
 position = Vector2(21, -44)
 
 [node name="d3" type="Sprite2D" parent="Position4"]
+visible = false
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")

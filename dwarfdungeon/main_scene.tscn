@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://c2rdv57n283at"]
+[gd_scene load_steps=7 format=3 uid="uid://c2rdv57n283at"]
 
 [ext_resource type="PackedScene" uid="uid://chym3vdoe3mpi" path="res://charachters/Unit.tscn" id="1_1p7cj"]
 [ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="2_7i657"]
 [ext_resource type="Script" path="res://scripts/camera.gd" id="2_cy2b8"]
 [ext_resource type="PackedScene" uid="uid://dpd2w5jp63a4r" path="res://charachters/Group.tscn" id="2_uci2j"]
+[ext_resource type="PackedScene" uid="uid://2ncwi4yjgf74" path="res://charachters/Enemy.tscn" id="5_58gj1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cogig"]
 size = Vector2(119, 121)
@@ -26,7 +27,7 @@ Speed = 60
 FormationCloseEnoughDistance = 15.0
 FormationMaxSpeedDistance = 150.0
 FormationMinSpeedCoefficient = 0.3
-FormationMaxSpeedCoefficient = 1.0
+FormationMaxSpeedCoefficient = 1.2
 
 [node name="Unit3" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(-175, 45)
@@ -34,7 +35,7 @@ Speed = 60
 FormationCloseEnoughDistance = 15.0
 FormationMaxSpeedDistance = 150.0
 FormationMinSpeedCoefficient = 0.3
-FormationMaxSpeedCoefficient = 1.0
+FormationMaxSpeedCoefficient = 1.2
 
 [node name="Unit2" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(108, -91)
@@ -42,7 +43,7 @@ Speed = 60
 FormationCloseEnoughDistance = 15.0
 FormationMaxSpeedDistance = 150.0
 FormationMinSpeedCoefficient = 0.3
-FormationMaxSpeedCoefficient = 1.0
+FormationMaxSpeedCoefficient = 1.2
 
 [node name="Unit" parent="." instance=ExtResource("1_1p7cj")]
 position = Vector2(-8, -144)
@@ -50,7 +51,7 @@ Speed = 60
 FormationCloseEnoughDistance = 15.0
 FormationMaxSpeedDistance = 150.0
 FormationMinSpeedCoefficient = 0.3
-FormationMaxSpeedCoefficient = 1.0
+FormationMaxSpeedCoefficient = 1.2
 
 [node name="obstacle" type="StaticBody2D" parent="."]
 position = Vector2(-186.5, -93.5)
@@ -73,3 +74,12 @@ texture = ExtResource("2_7i657")
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
 position = Vector2(370.5, 157.5)
 shape = SubResource("RectangleShape2D_cogig")
+
+[node name="Enemy" parent="." instance=ExtResource("5_58gj1")]
+position = Vector2(221, -94)
+
+[node name="Enemy2" parent="." instance=ExtResource("5_58gj1")]
+position = Vector2(222, -54)
+
+[node name="Enemy3" parent="." instance=ExtResource("5_58gj1")]
+position = Vector2(221, -135)
