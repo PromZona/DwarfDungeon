@@ -6,7 +6,8 @@
 
 namespace godot {
 
-class BehaviourManager : public Node {
+class BehaviourManager : public Node
+{
   GDCLASS(BehaviourManager, Node)
 
 private:

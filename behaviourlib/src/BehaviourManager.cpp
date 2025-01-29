@@ -1,4 +1,5 @@
 #include "BehaviourManager.h"
+
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/ref.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
@@ -10,19 +11,29 @@
 
 using namespace godot;
 
-void BehaviourManager::_bind_methods() {}
+void
+BehaviourManager::_bind_methods()
+{
+}
 
-BehaviourManager::BehaviourManager() { time_passed = 0.0; }
+BehaviourManager::BehaviourManager()
+{
+  time_passed = 0.0;
+}
 
 BehaviourManager::~BehaviourManager() {}
 
-void BehaviourManager::_ready() {
-  Node *parent = get_parent();
+void
+BehaviourManager::_ready()
+{
+  Node* parent = get_parent();
   TypedArray<Node> enemies = parent->find_children("Enemy*");
   m_enemies = enemies;
 }
 
-void BehaviourManager::_process(double delta) {
+void
+BehaviourManager::_process(double delta)
+{
 
   time_passed += delta;
   for (int i = 0; i < m_enemies.size(); i++) {
