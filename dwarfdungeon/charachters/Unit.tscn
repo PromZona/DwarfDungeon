@@ -92,7 +92,7 @@ _data = {
 }
 
 [node name="Unit" type="CharacterBody2D"]
-collision_mask = 2
+collision_layer = 2
 script = ExtResource("1_lorbv")
 Damage = 5.0
 

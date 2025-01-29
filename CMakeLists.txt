@@ -5,8 +5,8 @@ project(DwarfDungeon)
 add_subdirectory(godot-cpp)
 
 add_library(${PROJECT_NAME} SHARED
-	"${CMAKE_SOURCE_DIR}/behaviourlib/src/gdexample.cpp"
-	"${CMAKE_SOURCE_DIR}/behaviourlib/src/gdexample.h"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourManager.cpp"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourManager.h"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/register_types.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/register_types.h"
 )

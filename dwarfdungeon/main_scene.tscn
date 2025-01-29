@@ -83,3 +83,5 @@ position = Vector2(222, -54)
 
 [node name="Enemy3" parent="." instance=ExtResource("5_58gj1")]
 position = Vector2(221, -135)
+
+[node name="BehaviourManager" type="BehaviourManager" parent="."]
