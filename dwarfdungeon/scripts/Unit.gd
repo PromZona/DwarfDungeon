@@ -94,7 +94,7 @@ func apply_damage() -> void:
 	for col in collisions:
 		var enemy: Enemy = col.collider as Enemy
 		if enemy:
-			enemy.DealDamage(Damage)
+			enemy.ReceiveDamage(Damage)
 	return
 
 func Attack(direction: Vector2) -> void:

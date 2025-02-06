@@ -1,8 +1,10 @@
 #include "register_types.h"
 
 #include "BehaviourManager.h"
+#include "enemy.h"
 
 #include <gdextension_interface.h>
+#include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
@@ -15,6 +17,7 @@ initialize_example_module(ModuleInitializationLevel p_level)
     return;
   }
 
+  GDREGISTER_CLASS(Enemy);
   GDREGISTER_CLASS(BehaviourManager);
 }
 

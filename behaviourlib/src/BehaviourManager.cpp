@@ -74,8 +74,6 @@ BehaviourManager::_process(double delta)
 void
 BehaviourManager::_physics_process(double delta)
 {
-  uint32_t startTime = Time::get_singleton()->get_ticks_usec();
-
   for (auto& board : m_boards) {
     if (board.target_unit_id == NULL_ENTITY)
       continue;
@@ -87,9 +85,6 @@ BehaviourManager::_physics_process(double delta)
     enemy->set_velocity(direction * 10.0f);
     enemy->move_and_slide();
   }
-  uint32_t endTime = Time::get_singleton()->get_ticks_usec();
-  uint32_t timeSpent = endTime - startTime;
-  UtilityFunctions::print("Enemy Move Time: ", timeSpent);
 }
 
 EntityId
