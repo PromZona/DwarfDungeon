@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BehaviourNodes.h"
 #include <cstdint>
 #include <godot_cpp/classes/character_body2d.hpp>
 #include <godot_cpp/classes/ref.hpp>
@@ -27,6 +28,14 @@ private:
   std::vector<CharacterBody2D*> m_units;
   std::vector<UnitBlackBoard> m_boards;
   Node* m_group;
+
+  std::vector<BehaviourLib::ActionNode> m_actionNodes;
+  std::vector<BehaviourLib::SequqenceNode> m_sequenceNodes;
+  std::vector<BehaviourLib::SelectorNode> m_selectorNodes;
+
+  BehaviourLib::Node m_root;
+
+  BehaviourLib::Status ExecuteNode(BehaviourLib::Node node);
 
 protected:
   static void _bind_methods();

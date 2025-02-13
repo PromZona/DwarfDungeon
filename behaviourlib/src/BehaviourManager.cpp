@@ -1,4 +1,5 @@
 #include "BehaviourManager.h"
+#include "BehaviourNodes.h"
 
 #include <cstdint>
 #include <godot_cpp/classes/character_body2d.hpp>
@@ -16,6 +17,7 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/variant/variant.hpp>
 #include <limits>
+#include <vector>
 
 using namespace godot;
 
@@ -29,6 +31,10 @@ BehaviourManager::BehaviourManager()
   , m_units()
   , m_boards()
   , m_group(nullptr)
+  , m_actionNodes()
+  , m_sequenceNodes()
+  , m_selectorNodes()
+  , m_root()
 {
   if (Engine::get_singleton()->is_editor_hint())
     set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
@@ -39,6 +45,31 @@ BehaviourManager::~BehaviourManager() {}
 void
 BehaviourManager::_ready()
 {
+  BehaviourLib::ActionNode AttackNode{ .id = 0, .Execute = []() {
+                                        UtilityFunctions::print("Attack");
+                                        return BehaviourLib::Status::SUCCESS;
+                                      } };
+  BehaviourLib::ActionNode ChillNode{ .id = 1, .Execute = []() {
+                                       UtilityFunctions::print("Chill");
+                                       return BehaviourLib::Status::SUCCESS;
+                                     } };
+
+  BehaviourLib::SequqenceNode AttackAndChill{
+    .id = 0,
+    .children =
+      std::vector<BehaviourLib::Node>{
+        BehaviourLib::Node{ .id = 0, .type = BehaviourLib::NodeType::Action },
+        BehaviourLib::Node{ .id = 1, .type = BehaviourLib::NodeType::Action } }
+  };
+
+  m_actionNodes.push_back(AttackNode);
+  m_actionNodes.push_back(ChillNode);
+  m_sequenceNodes.push_back(AttackAndChill);
+
+  m_root = { .id = 0, .type = BehaviourLib::NodeType::Sequence };
+
+  BehaviourLib::Status st = ExecuteNode(m_root);
+
   Node* parent = get_parent();
   TypedArray<Node> enemies = parent->find_children("Enemy*");
 
@@ -58,6 +89,23 @@ BehaviourManager::_ready()
   for (uint32_t i = 0; i < m_enemies.size(); i++) {
     UnitBlackBoard board{ .unit_id = i, .target_unit_id = NULL_ENTITY };
     m_boards.push_back(board);
+  }
+}
+
+BehaviourLib::Status
+BehaviourManager::ExecuteNode(BehaviourLib::Node node)
+{
+  switch (node.type) {
+    case BehaviourLib::NodeType::Action:
+      return m_actionNodes[node.id].Execute();
+    case BehaviourLib::NodeType::Sequence:
+      BehaviourLib::SequqenceNode& seqNode = m_sequenceNodes[node.id];
+      for (auto& child : seqNode.children) {
+        BehaviourLib::Status status = ExecuteNode(child);
+        if (status == BehaviourLib::Status::FAILED)
+          return status;
+      }
+      return BehaviourLib::Status::SUCCESS;
   }
 }
 
