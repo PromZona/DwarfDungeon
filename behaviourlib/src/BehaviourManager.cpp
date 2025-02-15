@@ -1,7 +1,6 @@
 #include "BehaviourManager.h"
 #include "BehaviourNodes.h"
 
-#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
@@ -26,7 +25,6 @@
 #include <stdio.h>
 #include <string>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 using namespace godot;
@@ -42,9 +40,12 @@ BehaviourManager::BehaviourManager()
   , m_boards()
   , m_group(nullptr)
   , m_tree()
+  , m_actionTable()
 {
   if (Engine::get_singleton()->is_editor_hint())
     set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+
+  RegisterActionTable();
 }
 
 BehaviourManager::~BehaviourManager() {}
@@ -54,11 +55,6 @@ BehaviourManager::_ready()
 {
   if (Engine::get_singleton()->is_editor_hint())
     return;
-
-  LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
-
-  BehaviourLib::Status st = ExecuteNode(m_tree.nodes[m_tree.root]);
-
   Node* parent = get_parent();
   TypedArray<Node> enemies = parent->find_children("Enemy*");
 
@@ -79,6 +75,41 @@ BehaviourManager::_ready()
     UnitBlackBoard board{ .unit_id = i, .target_unit_id = NULL_ENTITY };
     m_boards.push_back(board);
   }
+
+  LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
+
+  BehaviourLib::Status st = ExecuteNode(m_tree.nodes[m_tree.root]);
+
+}
+
+BehaviourLib::Status
+BehaviourManager::SuperFindTarget(const BehaviourManager* manager,
+                                  UnitBlackBoard& blackboard)
+{
+  CharacterBody2D* enemy = manager->m_enemies[blackboard.unit_id];
+  Vector2 enemy_pos = enemy->get_position();
+
+  float lowestDistance = std::numeric_limits<float>::max();
+  EntityId closestEntity = NULL_ENTITY;
+  for (int i = 0; i < manager->m_units.size(); i++) {
+    float distance = manager->m_units[i]->get_position().distance_to(enemy_pos);
+    if (distance < lowestDistance) {
+      closestEntity = EntityId(i);
+      lowestDistance = distance;
+    }
+  }
+  blackboard.target_unit_id = closestEntity;
+  UtilityFunctions::print("Find target action: ",
+                          blackboard.unit_id,
+                          "->",
+                          blackboard.target_unit_id);
+  return BehaviourLib::Status::SUCCESS;
+}
+
+void
+BehaviourManager::RegisterActionTable()
+{
+  m_actionTable["FindTarget"] = &BehaviourManager::SuperFindTarget;
 }
 
 std::vector<std::string>
@@ -98,7 +129,7 @@ BehaviourManager::ExecuteNode(const BehaviourLib::Node& node)
 {
   switch (node.type) {
     case BehaviourLib::NodeType::Action:
-      return node.Execute();
+      return node.Execute(this, m_boards[0]);
 
     case BehaviourLib::NodeType::Sequence:
       for (auto& child : node.children) {
@@ -178,10 +209,8 @@ BehaviourManager::LoadAiTree(const std::string& filename)
     if (tempData.type == "A") {
 
       node->type = BehaviourLib::NodeType::Action;
-      node->Execute = [tempData]() {
-        UtilityFunctions::print(tempData.data.c_str());
-        return BehaviourLib::Status::SUCCESS;
-      };
+      auto func = m_actionTable[tempData.data];
+      node->Execute = func;
     } else if (tempData.type == "S") {
 
       node->type = BehaviourLib::NodeType::Sequence;

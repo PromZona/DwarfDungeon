@@ -1,9 +1,16 @@
 #pragma once
 
+#include "BehaviourManager.h"
 #include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <vector>
+
+namespace godot
+{
+  class BehaviourManager;
+  struct UnitBlackBoard;
+}
 
 // Action Node
 // Sequence Node
@@ -38,7 +45,7 @@ struct Node
   NodeId id;
   NodeType type;
   std::vector<NodeId> children;
-  std::function<Status()> Execute;
+  std::function<Status(const godot::BehaviourManager*, godot::UnitBlackBoard&)> Execute;
 };
 
 struct Tree
