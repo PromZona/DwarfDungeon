@@ -1,0 +1,6 @@
+[General Data]
+root 0
+0 S 1,2,3
+1 A Attack
+2 A Chill
+3 A Attack

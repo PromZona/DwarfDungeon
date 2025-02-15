@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <vector>
@@ -19,12 +20,6 @@ enum class NodeType
   Selector
 };
 
-struct Node
-{
-  NodeId id;
-  NodeType type;
-};
-
 enum class Status
 {
   FAILED,
@@ -32,22 +27,25 @@ enum class Status
   SUCCESS
 };
 
-struct ActionNode
+struct NodeRef
 {
   NodeId id;
+  NodeType type;
+};
+
+struct Node
+{ 
+  NodeId id;
+  NodeType type;
+  std::vector<NodeId> children;
   std::function<Status()> Execute;
 };
 
-struct SequqenceNode
+struct Tree
 {
-  NodeId id;
-  std::vector<Node> children;
-};
-
-struct SelectorNode
-{
-  NodeId id;
-  std::vector<Node> children;
+  BehaviourLib::NodeId root;
+  BehaviourLib::Node* nodes;
+  int16_t nodesCount;
 };
 
 }; // namespace BehaviourLib

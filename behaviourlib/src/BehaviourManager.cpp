@@ -1,13 +1,18 @@
 #include "BehaviourManager.h"
 #include "BehaviourNodes.h"
 
+#include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <godot_cpp/classes/character_body2d.hpp>
 #include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/classes/input.hpp>
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/classes/ref.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -17,6 +22,11 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/variant/variant.hpp>
 #include <limits>
+#include <sstream>
+#include <stdio.h>
+#include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 using namespace godot;
@@ -31,10 +41,7 @@ BehaviourManager::BehaviourManager()
   , m_units()
   , m_boards()
   , m_group(nullptr)
-  , m_actionNodes()
-  , m_sequenceNodes()
-  , m_selectorNodes()
-  , m_root()
+  , m_tree()
 {
   if (Engine::get_singleton()->is_editor_hint())
     set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
@@ -45,30 +52,12 @@ BehaviourManager::~BehaviourManager() {}
 void
 BehaviourManager::_ready()
 {
-  BehaviourLib::ActionNode AttackNode{ .id = 0, .Execute = []() {
-                                        UtilityFunctions::print("Attack");
-                                        return BehaviourLib::Status::SUCCESS;
-                                      } };
-  BehaviourLib::ActionNode ChillNode{ .id = 1, .Execute = []() {
-                                       UtilityFunctions::print("Chill");
-                                       return BehaviourLib::Status::SUCCESS;
-                                     } };
+  if (Engine::get_singleton()->is_editor_hint())
+    return;
 
-  BehaviourLib::SequqenceNode AttackAndChill{
-    .id = 0,
-    .children =
-      std::vector<BehaviourLib::Node>{
-        BehaviourLib::Node{ .id = 0, .type = BehaviourLib::NodeType::Action },
-        BehaviourLib::Node{ .id = 1, .type = BehaviourLib::NodeType::Action } }
-  };
+  LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
 
-  m_actionNodes.push_back(AttackNode);
-  m_actionNodes.push_back(ChillNode);
-  m_sequenceNodes.push_back(AttackAndChill);
-
-  m_root = { .id = 0, .type = BehaviourLib::NodeType::Sequence };
-
-  BehaviourLib::Status st = ExecuteNode(m_root);
+  BehaviourLib::Status st = ExecuteNode(m_tree.nodes[m_tree.root]);
 
   Node* parent = get_parent();
   TypedArray<Node> enemies = parent->find_children("Enemy*");
@@ -92,21 +81,117 @@ BehaviourManager::_ready()
   }
 }
 
+std::vector<std::string>
+SplitString(const std::string& s, char sep = ',')
+{
+  std::vector<std::string> v;
+  std::stringstream ss(s);
+  std::string token;
+  while (std::getline(ss, token, sep)) {
+    v.push_back(token);
+  }
+  return v;
+}
+
 BehaviourLib::Status
-BehaviourManager::ExecuteNode(BehaviourLib::Node node)
+BehaviourManager::ExecuteNode(const BehaviourLib::Node& node)
 {
   switch (node.type) {
     case BehaviourLib::NodeType::Action:
-      return m_actionNodes[node.id].Execute();
+      return node.Execute();
+
     case BehaviourLib::NodeType::Sequence:
-      BehaviourLib::SequqenceNode& seqNode = m_sequenceNodes[node.id];
-      for (auto& child : seqNode.children) {
-        BehaviourLib::Status status = ExecuteNode(child);
+      for (auto& child : node.children) {
+        BehaviourLib::Status status = ExecuteNode(m_tree.nodes[child]);
         if (status == BehaviourLib::Status::FAILED)
           return status;
       }
       return BehaviourLib::Status::SUCCESS;
   }
+}
+void
+BehaviourManager::LoadAiTree(const std::string& filename)
+{
+  Ref<FileAccess> file = FileAccess::open(filename.c_str(), FileAccess::READ);
+  String data = file->get_as_text();
+  file->close();
+
+
+  std::string cool_string{ data.utf8() };
+
+  struct TempNodeData
+  {
+    std::string id;
+    std::string type;
+    std::string data;
+  };
+
+  std::vector<TempNodeData> nodes{};
+  std::unordered_map<std::string, BehaviourLib::NodeId> dataIdToNodeId{};
+
+  std::string line;
+  std::istringstream dataStream(cool_string);
+
+
+  int nodesCount = 0;
+  std::string rootIdString = {};
+  BehaviourLib::NodeId rootId = BehaviourLib::EMPTY_NODE_ID;
+  while (std::getline(dataStream, line)) {
+    if (line.empty() || line[0] == '[')
+      continue;
+
+    std::istringstream lineStream(line);
+    std::string id, type, data;
+
+    lineStream >> id >> type >> data;
+
+    if (id == "root") {
+      rootIdString = type;
+      continue;
+    }
+
+    if (id == rootIdString) {
+      rootId = nodesCount; // nodesCount is an index in the final array;
+    }
+    dataIdToNodeId.insert({ id, nodesCount });
+    nodes.push_back(TempNodeData{ .id = id, .type = type, .data = data });
+    nodesCount++;
+  }
+
+
+  BehaviourLib::Tree tree{};
+  tree.nodesCount = nodesCount;
+  tree.root = rootId;
+  tree.nodes = new BehaviourLib::Node[nodesCount];
+  m_tree = tree;
+  
+  for (BehaviourLib::NodeId i = 0; i < nodesCount; i++) {
+      const TempNodeData& tempData = nodes[i];
+      BehaviourLib::Node* node = &m_tree.nodes[i];
+
+      node->id = i;
+
+      if (tempData.type == "A") {
+
+        node->type = BehaviourLib::NodeType::Action;
+        node->Execute = [tempData]() {
+          UtilityFunctions::print(tempData.data.c_str());
+          return BehaviourLib::Status::SUCCESS;
+        };
+      } else if (tempData.type == "S") {
+
+        node->type = BehaviourLib::NodeType::Sequence;
+        std::vector<std::string> ids = SplitString(tempData.data);
+
+        for (auto const& strid : ids) {
+
+          BehaviourLib::NodeId id = dataIdToNodeId.at(strid);
+          node->children.push_back(id);
+        }
+      }
+
+    }
+    
 }
 
 void

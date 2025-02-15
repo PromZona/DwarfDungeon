@@ -29,13 +29,10 @@ private:
   std::vector<UnitBlackBoard> m_boards;
   Node* m_group;
 
-  std::vector<BehaviourLib::ActionNode> m_actionNodes;
-  std::vector<BehaviourLib::SequqenceNode> m_sequenceNodes;
-  std::vector<BehaviourLib::SelectorNode> m_selectorNodes;
+  BehaviourLib::Tree m_tree;
 
-  BehaviourLib::Node m_root;
-
-  BehaviourLib::Status ExecuteNode(BehaviourLib::Node node);
+  BehaviourLib::Status ExecuteNode(const BehaviourLib::Node& node);
+  void LoadAiTree(const std::string& filename);
 
 protected:
   static void _bind_methods();
