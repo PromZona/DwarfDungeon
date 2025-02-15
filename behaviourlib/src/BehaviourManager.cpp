@@ -107,6 +107,13 @@ BehaviourManager::ExecuteNode(const BehaviourLib::Node& node)
           return status;
       }
       return BehaviourLib::Status::SUCCESS;
+    case BehaviourLib::NodeType::Selector:
+      for (auto& child : node.children) {
+        BehaviourLib::Status status = ExecuteNode(m_tree.nodes[child]);
+        if (status == BehaviourLib::Status::SUCCESS)
+          return status;
+      }
+      return BehaviourLib::Status::FAILED;
   }
 }
 void
@@ -115,7 +122,6 @@ BehaviourManager::LoadAiTree(const std::string& filename)
   Ref<FileAccess> file = FileAccess::open(filename.c_str(), FileAccess::READ);
   String data = file->get_as_text();
   file->close();
-
 
   std::string cool_string{ data.utf8() };
 
@@ -131,7 +137,6 @@ BehaviourManager::LoadAiTree(const std::string& filename)
 
   std::string line;
   std::istringstream dataStream(cool_string);
-
 
   int nodesCount = 0;
   std::string rootIdString = {};
@@ -158,40 +163,43 @@ BehaviourManager::LoadAiTree(const std::string& filename)
     nodesCount++;
   }
 
-
   BehaviourLib::Tree tree{};
   tree.nodesCount = nodesCount;
   tree.root = rootId;
   tree.nodes = new BehaviourLib::Node[nodesCount];
   m_tree = tree;
-  
+
   for (BehaviourLib::NodeId i = 0; i < nodesCount; i++) {
-      const TempNodeData& tempData = nodes[i];
-      BehaviourLib::Node* node = &m_tree.nodes[i];
+    const TempNodeData& tempData = nodes[i];
+    BehaviourLib::Node* node = &m_tree.nodes[i];
 
-      node->id = i;
+    node->id = i;
 
-      if (tempData.type == "A") {
+    if (tempData.type == "A") {
 
-        node->type = BehaviourLib::NodeType::Action;
-        node->Execute = [tempData]() {
-          UtilityFunctions::print(tempData.data.c_str());
-          return BehaviourLib::Status::SUCCESS;
-        };
-      } else if (tempData.type == "S") {
+      node->type = BehaviourLib::NodeType::Action;
+      node->Execute = [tempData]() {
+        UtilityFunctions::print(tempData.data.c_str());
+        return BehaviourLib::Status::SUCCESS;
+      };
+    } else if (tempData.type == "S") {
 
-        node->type = BehaviourLib::NodeType::Sequence;
-        std::vector<std::string> ids = SplitString(tempData.data);
-
-        for (auto const& strid : ids) {
-
-          BehaviourLib::NodeId id = dataIdToNodeId.at(strid);
-          node->children.push_back(id);
-        }
+      node->type = BehaviourLib::NodeType::Sequence;
+      std::vector<std::string> ids = SplitString(tempData.data);
+      for (auto const& strid : ids) {
+        BehaviourLib::NodeId id = dataIdToNodeId.at(strid);
+        node->children.push_back(id);
       }
+    } else if (tempData.type == "F") {
 
+      node->type = BehaviourLib::NodeType::Selector;
+      std::vector<std::string> ids = SplitString(tempData.data);
+      for (auto const& strid : ids) {
+        BehaviourLib::NodeId id = dataIdToNodeId.at(strid);
+        node->children.push_back(id);
+      }
     }
-    
+  }
 }
 
 void
