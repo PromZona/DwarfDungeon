@@ -1,3 +1,6 @@
 [General Data]
 root 0
-0 A FindTarget
+0 S 1,2,3
+1 A FindTarget
+2 A StartMove
+3 A CheckIfArrived

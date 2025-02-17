@@ -77,9 +77,7 @@ BehaviourManager::_ready()
   }
 
   LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
-
   BehaviourLib::Status st = ExecuteNode(m_tree.nodes[m_tree.root]);
-
 }
 
 BehaviourLib::Status
@@ -106,10 +104,25 @@ BehaviourManager::SuperFindTarget(const BehaviourManager* manager,
   return BehaviourLib::Status::SUCCESS;
 }
 
+BehaviourLib::Status
+StartMove(const BehaviourManager* manager, UnitBlackBoard& blackboard)
+{
+
+  return BehaviourLib::Status::SUCCESS;
+}
+
+BehaviourLib::Status
+CheckIfArrived(const BehaviourManager* manager, UnitBlackBoard& blackboard)
+{
+  return BehaviourLib::Status::RUNNING;
+}
+
 void
 BehaviourManager::RegisterActionTable()
 {
   m_actionTable["FindTarget"] = &BehaviourManager::SuperFindTarget;
+  m_actionTable["StartMove"] = &BehaviourManager::StartMove;
+  m_actionTable["CheckIfArrived"] = &BehaviourManager::CheckIfArrived;
 }
 
 std::vector<std::string>
@@ -127,6 +140,12 @@ SplitString(const std::string& s, char sep = ',')
 BehaviourLib::Status
 BehaviourManager::ExecuteNode(const BehaviourLib::Node& node)
 {
+  // TODO:
+  // 1) Switch from recursion to loop
+  // 2) Add stack for execution -> each node required to execute goes on stack
+  // 3) Add execution context -> data where current node is stored. Need this for
+  // to understand where in the tree execution stopped
+
   switch (node.type) {
     case BehaviourLib::NodeType::Action:
       return node.Execute(this, m_boards[0]);
@@ -234,6 +253,8 @@ BehaviourManager::LoadAiTree(const std::string& filename)
 void
 BehaviourManager::_process(double delta)
 {
+  // TODO:
+  // Tick brains here. Call ExecuteNode on all ai enemies
   for (auto& board : m_boards) {
     if (board.target_unit_id == NULL_ENTITY) {
       board.target_unit_id = FindTarget(board.unit_id);
