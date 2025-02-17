@@ -137,6 +137,21 @@ SplitString(const std::string& s, char sep = ',')
   return v;
 }
 
+BehaviourLib::Status BehaviourManager::exec(const EntityId entityId)
+{
+  auto& mem = m_executionMemory[entityId]; 
+  auto& node =  mem.currentNode;
+  while(true)
+  {
+      switch(node.type)
+      {
+        case BehaviourLib::NodeType::Sequence:
+          for ()
+          return BehaviourLib::Status::SUCCESS;
+      }
+  }
+}
+
 BehaviourLib::Status
 BehaviourManager::ExecuteNode(const BehaviourLib::Node& node)
 {

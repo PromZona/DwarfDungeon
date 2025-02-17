@@ -33,7 +33,7 @@ private:
   std::vector<CharacterBody2D*> m_enemies;
   std::vector<CharacterBody2D*> m_units;
   std::vector<UnitBlackBoard> m_boards;
-  std::vector<> m_executionMemory;
+  std::vector<ExecutionFrame> m_executionFrame;
   Node* m_group;
 
   BehaviourLib::Tree m_tree;
