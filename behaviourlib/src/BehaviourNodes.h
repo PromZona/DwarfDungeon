@@ -45,7 +45,7 @@ struct Node
   NodeId id;
   NodeType type;
   std::vector<NodeId> children;
-  std::function<Status(const godot::BehaviourManager*, godot::UnitBlackBoard&)> Execute;
+  std::function<Status(godot::BehaviourManager*, godot::UnitBlackBoard&)> Execute;
 };
 
 struct Tree

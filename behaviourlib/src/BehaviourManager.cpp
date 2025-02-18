@@ -1,7 +1,6 @@
 #include "BehaviourManager.h"
 #include "BehaviourNodes.h"
 
-#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <godot_cpp/classes/character_body2d.hpp>
@@ -22,7 +21,6 @@
 #include <godot_cpp/variant/variant.hpp>
 #include <limits>
 #include <sstream>
-#include <stdio.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -38,6 +36,8 @@ BehaviourManager::BehaviourManager()
   : m_enemies()
   , m_units()
   , m_boards()
+  , m_executionContext()
+  , m_movingEntities()
   , m_group(nullptr)
   , m_tree()
   , m_actionTable()
@@ -74,15 +74,15 @@ BehaviourManager::_ready()
   for (uint32_t i = 0; i < m_enemies.size(); i++) {
     UnitBlackBoard board{ .unit_id = i, .target_unit_id = NULL_ENTITY };
     m_boards.push_back(board);
+    m_executionContext.push_back({ .stack = {} });
   }
 
   LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
-  BehaviourLib::Status st = ExecuteNode(m_tree.nodes[m_tree.root]);
 }
 
 BehaviourLib::Status
-BehaviourManager::SuperFindTarget(const BehaviourManager* manager,
-                                  UnitBlackBoard& blackboard)
+BehaviourManager::FindTarget(BehaviourManager* manager,
+                             UnitBlackBoard& blackboard)
 {
   CharacterBody2D* enemy = manager->m_enemies[blackboard.unit_id];
   Vector2 enemy_pos = enemy->get_position();
@@ -105,14 +105,16 @@ BehaviourManager::SuperFindTarget(const BehaviourManager* manager,
 }
 
 BehaviourLib::Status
-StartMove(const BehaviourManager* manager, UnitBlackBoard& blackboard)
+BehaviourManager::StartMove(BehaviourManager* manager,
+                            UnitBlackBoard& blackboard)
 {
-
+  manager->m_movingEntities.push_back(blackboard.unit_id);
   return BehaviourLib::Status::SUCCESS;
 }
 
 BehaviourLib::Status
-CheckIfArrived(const BehaviourManager* manager, UnitBlackBoard& blackboard)
+BehaviourManager::CheckIfArrived(BehaviourManager* manager,
+                                 UnitBlackBoard& blackboard)
 {
   return BehaviourLib::Status::RUNNING;
 }
@@ -120,7 +122,7 @@ CheckIfArrived(const BehaviourManager* manager, UnitBlackBoard& blackboard)
 void
 BehaviourManager::RegisterActionTable()
 {
-  m_actionTable["FindTarget"] = &BehaviourManager::SuperFindTarget;
+  m_actionTable["FindTarget"] = &BehaviourManager::FindTarget;
   m_actionTable["StartMove"] = &BehaviourManager::StartMove;
   m_actionTable["CheckIfArrived"] = &BehaviourManager::CheckIfArrived;
 }
@@ -137,50 +139,55 @@ SplitString(const std::string& s, char sep = ',')
   return v;
 }
 
-BehaviourLib::Status BehaviourManager::exec(const EntityId entityId)
-{
-  auto& mem = m_executionMemory[entityId]; 
-  auto& node =  mem.currentNode;
-  while(true)
-  {
-      switch(node.type)
-      {
-        case BehaviourLib::NodeType::Sequence:
-          for ()
-          return BehaviourLib::Status::SUCCESS;
-      }
-  }
-}
-
 BehaviourLib::Status
-BehaviourManager::ExecuteNode(const BehaviourLib::Node& node)
+BehaviourManager::ExecuteNode(const EntityId entityId)
 {
-  // TODO:
-  // 1) Switch from recursion to loop
-  // 2) Add stack for execution -> each node required to execute goes on stack
-  // 3) Add execution context -> data where current node is stored. Need this for
-  // to understand where in the tree execution stopped
+  ExecutionContext& context = m_executionContext[entityId];
 
-  switch (node.type) {
-    case BehaviourLib::NodeType::Action:
-      return node.Execute(this, m_boards[0]);
-
-    case BehaviourLib::NodeType::Sequence:
-      for (auto& child : node.children) {
-        BehaviourLib::Status status = ExecuteNode(m_tree.nodes[child]);
-        if (status == BehaviourLib::Status::FAILED)
-          return status;
-      }
-      return BehaviourLib::Status::SUCCESS;
-    case BehaviourLib::NodeType::Selector:
-      for (auto& child : node.children) {
-        BehaviourLib::Status status = ExecuteNode(m_tree.nodes[child]);
-        if (status == BehaviourLib::Status::SUCCESS)
-          return status;
-      }
-      return BehaviourLib::Status::FAILED;
+  if (context.stack.empty()) {
+    context.stack.push_back({ m_tree.root, 0 });
   }
+
+  while (!context.stack.empty()) {
+    ExecutionFrame& frame = context.stack.back();
+    BehaviourLib::Node& node = m_tree.nodes[frame.nodeId];
+
+    switch (node.type) {
+      case BehaviourLib::NodeType::Sequence: {
+        bool isPreviousChildFailed =
+          frame.childIndex > 0 &&
+          frame.lastChildStatus == BehaviourLib::Status::FAILED;
+        bool isChildrenLeft = frame.childIndex < node.children.size();
+
+        if (isPreviousChildFailed || (!isChildrenLeft)) {
+          context.stack.pop_back();
+          if (!context.stack.empty()) {
+            context.stack.back().lastChildStatus = frame.lastChildStatus;
+          }
+        } else {
+          context.stack.push_back({ node.children[frame.childIndex], 0 });
+          frame.childIndex++;
+        }
+        break;
+      }
+      case BehaviourLib::NodeType::Selector: {
+        break;
+      }
+      case BehaviourLib::NodeType::Action: {
+        BehaviourLib::Status status = node.Execute(this, m_boards[entityId]);
+        if (status == BehaviourLib::Status::RUNNING) {
+          return status;
+        } else {
+          context.stack.pop_back();
+          context.stack.back().lastChildStatus = status;
+        }
+        break;
+      }
+    }
+  }
+  return BehaviourLib::Status::SUCCESS;
 }
+
 void
 BehaviourManager::LoadAiTree(const std::string& filename)
 {
@@ -268,48 +275,25 @@ BehaviourManager::LoadAiTree(const std::string& filename)
 void
 BehaviourManager::_process(double delta)
 {
-  // TODO:
-  // Tick brains here. Call ExecuteNode on all ai enemies
-  for (auto& board : m_boards) {
-    if (board.target_unit_id == NULL_ENTITY) {
-      board.target_unit_id = FindTarget(board.unit_id);
-    }
+  for (EntityId id = 0; id < m_enemies.size(); id++) {
+    BehaviourLib::Status status = ExecuteNode(id);
   }
 }
 
 void
 BehaviourManager::_physics_process(double delta)
 {
-  for (auto& board : m_boards) {
+  for (EntityId id : m_movingEntities) {
+    UnitBlackBoard& board = m_boards[id];
+
     if (board.target_unit_id == NULL_ENTITY)
       continue;
 
-    CharacterBody2D* enemy = m_enemies[board.unit_id];
+    CharacterBody2D* enemy = m_enemies[id];
     const CharacterBody2D* target_unit = m_units[board.target_unit_id];
     const Vector2 direction =
       enemy->get_position().direction_to(target_unit->get_position());
     enemy->set_velocity(direction * 10.0f);
     enemy->move_and_slide();
   }
-}
-
-EntityId
-BehaviourManager::FindTarget(EntityId enemy_id) const
-{
-  CharacterBody2D* enemy = m_enemies[enemy_id];
-  Vector2 enemy_pos = enemy->get_position();
-
-  float lowestDistance = std::numeric_limits<float>::max();
-  EntityId closestEntity = NULL_ENTITY;
-  for (int i = 0; i < m_units.size(); i++) {
-    float distance = m_units[i]->get_position().distance_to(enemy_pos);
-    if (distance < lowestDistance) {
-      closestEntity = EntityId(i);
-      lowestDistance = distance;
-    }
-  }
-
-  UtilityFunctions::print(
-    "Enemy: ", enemy_id, " ; Closest Unit: ", closestEntity);
-  return closestEntity;
 }
