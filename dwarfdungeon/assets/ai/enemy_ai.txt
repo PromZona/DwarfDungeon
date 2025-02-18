@@ -1,7 +1,8 @@
 [General Data]
 root 0
-0 S 1,2,3,4
+0 S 1,2,3,4,5
 1 A FindTarget
 2 A StartMove
 3 A CheckIfArrived
-4 A Pause
+4 A Attack
+5 A Pause

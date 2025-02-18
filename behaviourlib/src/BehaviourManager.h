@@ -21,6 +21,7 @@ struct UnitBlackBoard
   EntityId target_unit_id;
   std::chrono::system_clock::time_point timestamp;
   bool isWaiting = false;
+  bool isAttacking = false;
 };
 
 struct ExecutionFrame
@@ -77,6 +78,8 @@ public:
                                              UnitBlackBoard& blackboard);
   static BehaviourLib::Status Pause(BehaviourManager* manager,
                                     UnitBlackBoard& blackboard);
+  static BehaviourLib::Status Attack(BehaviourManager* manager,
+                                     UnitBlackBoard& blackboard);
 };
 
 } // namespace godot

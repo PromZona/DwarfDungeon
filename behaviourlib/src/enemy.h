@@ -21,12 +21,17 @@ public:
   void _ready() override;
 
   void ReceiveDamage(float damage);
-
+  void Attack(Vector2 direction);
+  void ApplyDamage();
+  bool IsAttacking();
 protected:
   static void _bind_methods();
 
 private:
   TextureProgressBar* HealthBar = nullptr;
   AnimationPlayer* AnimPlayer = nullptr;
+  Node2D* AttackAreaHandler = nullptr;
+  
+  Vector2 AttackDirection = {};
 };
 }

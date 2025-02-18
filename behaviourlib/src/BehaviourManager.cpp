@@ -143,11 +143,31 @@ BehaviourManager::Pause(BehaviourManager* manager, UnitBlackBoard& blackboard)
     blackboard.timestamp = std::chrono::system_clock::now();
     blackboard.isWaiting = true;
   }
-   auto now = std::chrono::system_clock::now();
-  std::chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(now - blackboard.timestamp);
+  auto now = std::chrono::system_clock::now();
+  std::chrono::seconds duration =
+    std::chrono::duration_cast<std::chrono::seconds>(now -
+                                                     blackboard.timestamp);
 
-  if (duration.count() >= 5.0f){
-    blackboard.isWaiting = false;
+  if (duration.count() >= 5.0f)
+    return BehaviourLib::Status::SUCCESS;
+
+  return BehaviourLib::Status::RUNNING;
+}
+
+BehaviourLib::Status
+BehaviourManager::Attack(BehaviourManager* manager, UnitBlackBoard& blackboard)
+{
+  Enemy* enemy = static_cast<Enemy*>(manager->m_enemies[blackboard.unit_id]);
+  if (!blackboard.isAttacking) {
+    CharacterBody2D* targetUnit = manager->m_units[blackboard.target_unit_id];
+    Vector2 targetPosition = targetUnit->get_position();
+    enemy->Attack(targetPosition);
+    blackboard.isAttacking = true;
+    return BehaviourLib::Status::RUNNING;
+  }
+
+  if (!enemy->IsAttacking()) {
+    blackboard.isAttacking = false;
     return BehaviourLib::Status::SUCCESS;
   }
   return BehaviourLib::Status::RUNNING;
@@ -160,6 +180,7 @@ BehaviourManager::RegisterActionTable()
   m_actionTable["StartMove"] = &BehaviourManager::StartMove;
   m_actionTable["CheckIfArrived"] = &BehaviourManager::CheckIfArrived;
   m_actionTable["Pause"] = &BehaviourManager::Pause;
+  m_actionTable["Attack"] = &BehaviourManager::Attack;
 }
 
 std::vector<std::string>
