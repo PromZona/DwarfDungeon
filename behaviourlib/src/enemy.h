@@ -13,6 +13,7 @@ class Enemy : public CharacterBody2D
 public:
   float MaxHealth = 100.0f;
   float CurrentHealth = MaxHealth;
+  float AttackRadius = 32.0f + 8.0f;
 
   Enemy();
   ~Enemy();

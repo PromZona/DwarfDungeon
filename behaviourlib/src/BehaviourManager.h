@@ -19,6 +19,8 @@ struct UnitBlackBoard
 {
   EntityId unit_id;
   EntityId target_unit_id;
+  std::chrono::system_clock::time_point timestamp;
+  bool isWaiting = false;
 };
 
 struct ExecutionFrame
@@ -68,11 +70,13 @@ public:
   void _ready() override;
 
   static BehaviourLib::Status FindTarget(BehaviourManager* manager,
-                                              UnitBlackBoard& blackboard);
+                                         UnitBlackBoard& blackboard);
   static BehaviourLib::Status StartMove(BehaviourManager* manager,
                                         UnitBlackBoard& blackboard);
   static BehaviourLib::Status CheckIfArrived(BehaviourManager* manager,
                                              UnitBlackBoard& blackboard);
+  static BehaviourLib::Status Pause(BehaviourManager* manager,
+                                    UnitBlackBoard& blackboard);
 };
 
 } // namespace godot

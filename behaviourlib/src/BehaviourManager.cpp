@@ -1,6 +1,8 @@
 #include "BehaviourManager.h"
 #include "BehaviourNodes.h"
+#include "enemy.h"
 
+#include <chrono>
 #include <cstdint>
 #include <cstdlib>
 #include <godot_cpp/classes/character_body2d.hpp>
@@ -116,6 +118,38 @@ BehaviourLib::Status
 BehaviourManager::CheckIfArrived(BehaviourManager* manager,
                                  UnitBlackBoard& blackboard)
 {
+  Enemy* enemy = static_cast<Enemy*>(manager->m_enemies[blackboard.unit_id]);
+  CharacterBody2D* targetUnit = manager->m_units[blackboard.target_unit_id];
+  float distance =
+    enemy->get_position().distance_to(targetUnit->get_position());
+
+  if (distance < enemy->AttackRadius) {
+    auto position = std::find(manager->m_movingEntities.begin(),
+                              manager->m_movingEntities.end(),
+                              blackboard.unit_id);
+
+    if (position != manager->m_movingEntities.end())
+      manager->m_movingEntities.erase(position);
+    return BehaviourLib::Status::SUCCESS;
+  }
+  return BehaviourLib::Status::RUNNING;
+}
+
+BehaviourLib::Status
+BehaviourManager::Pause(BehaviourManager* manager, UnitBlackBoard& blackboard)
+{
+  if (!blackboard.isWaiting) {
+
+    blackboard.timestamp = std::chrono::system_clock::now();
+    blackboard.isWaiting = true;
+  }
+   auto now = std::chrono::system_clock::now();
+  std::chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(now - blackboard.timestamp);
+
+  if (duration.count() >= 5.0f){
+    blackboard.isWaiting = false;
+    return BehaviourLib::Status::SUCCESS;
+  }
   return BehaviourLib::Status::RUNNING;
 }
 
@@ -125,6 +159,7 @@ BehaviourManager::RegisterActionTable()
   m_actionTable["FindTarget"] = &BehaviourManager::FindTarget;
   m_actionTable["StartMove"] = &BehaviourManager::StartMove;
   m_actionTable["CheckIfArrived"] = &BehaviourManager::CheckIfArrived;
+  m_actionTable["Pause"] = &BehaviourManager::Pause;
 }
 
 std::vector<std::string>
