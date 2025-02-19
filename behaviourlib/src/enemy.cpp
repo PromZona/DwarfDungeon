@@ -2,6 +2,7 @@
 
 #include <godot_cpp/classes/animation_mixer.hpp>
 #include <godot_cpp/classes/animation_player.hpp>
+#include <godot_cpp/classes/character_body2d.hpp>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/shape_cast2d.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
@@ -66,11 +67,13 @@ Enemy::ApplyDamage()
 {
   ShapeCast2D* attackArea =
     AttackAreaHandler->get_node<ShapeCast2D>("AttackArea");
-  
+
   attackArea->force_shapecast_update();
   for (int i = 0; i < attackArea->get_collision_count(); i++) {
     Object* obj = attackArea->get_collider(i);
-    UtilityFunctions::print("Attack in radius: ", this, "->", obj);
+    CharacterBody2D* charachter = Object::cast_to<CharacterBody2D>(obj);
+    if (charachter)
+      UtilityFunctions::print("Attack in radius: ", this->get_name(), "->", charachter->get_name());
   }
 }
 

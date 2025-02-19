@@ -148,9 +148,10 @@ BehaviourManager::Pause(BehaviourManager* manager, UnitBlackBoard& blackboard)
     std::chrono::duration_cast<std::chrono::seconds>(now -
                                                      blackboard.timestamp);
 
-  if (duration.count() >= 5.0f)
+  if (duration.count() >= 5.0f) {
+    blackboard.isWaiting = false;
     return BehaviourLib::Status::SUCCESS;
-
+  }
   return BehaviourLib::Status::RUNNING;
 }
 
