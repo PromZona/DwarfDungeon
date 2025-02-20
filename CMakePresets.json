@@ -13,6 +13,7 @@
 			"name": "debug-clang",
 			"inherits": "common",
 			"generator": "Ninja",
+			"binaryDir": "build/clang/debug",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Debug",
 				"CMAKE_C_COMPILER": "clang",
@@ -22,7 +23,8 @@
 		{			
 			"name": "release-clang",
 			"inherits": "common",
-			"generator": "Ninja",
+			"generator": "Ninja",			
+			"binaryDir": "build/clang/release",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Release",
 				"CMAKE_C_COMPILER": "clang",
@@ -33,11 +35,32 @@
 			"name": "debug-web",
 			"inherits": "common",
 			"generator": "Ninja",
+			"binaryDir": "build/web/debug",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Debug",
 				"CMAKE_C_COMPILER": "emcc",
 				"CMAKE_CXX_COMPILER": "em++"
 			}
 		}
-	]
+	],
+	"buildPresets": [
+    {
+      "name": "debug-build",
+      "description": "Build Debug, Clang",
+      "configurePreset": "debug-clang",
+      "jobs": 8
+    },
+		{
+      "name": "release-build",
+      "description": "Release Debug, Clang",
+      "configurePreset": "release-clang",
+      "jobs": 8
+    },
+		{
+      "name": "web-build",
+      "description": "Build Debug, Web",
+      "configurePreset": "debug-web",
+      "jobs": 8
+    }
+  ]
 }

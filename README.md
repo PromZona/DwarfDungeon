@@ -22,11 +22,18 @@ git submodule update --init
 godot  --dump-extension-api
 mv extension_api.json <path to DwarfDungeon directory>
 ```
-3) compile and build
+3) Configure, compile, install
 ```sh
 cmake --preset debug-clang
-cd build
-ninja install
+cmake --build --preset debug-build --target install
+```
+or
+
+If you want auto-detection of tools
+```sh
+cmake -S . -G <Your Generator:ninja/make> -B <build directory>
+cd <build directory>
+<ninja/cmake> install
 ```
 > [!NOTE]
 > Building godot-cpp for the first time takes some time 
@@ -43,8 +50,7 @@ Download and install instructionsa are [here](https://emscripten.org/docs/gettin
 In DwarfDungeon root directory 
 ```sh
 emcmake cmake --preset debug-web
-cd build
-ninja install
+emcmake cmake --build --preset web-build
 ```
 
 3) Godot export
