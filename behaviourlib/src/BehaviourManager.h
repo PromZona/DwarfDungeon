@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace godot {
+namespace BehaviourLib {
 
 typedef int64_t EntityId;
 const EntityId NULL_ENTITY = -1;
@@ -36,13 +36,13 @@ struct ExecutionContext
   std::deque<ExecutionFrame> stack;
 };
 
-class BehaviourManager : public Node
+class BehaviourManager : public godot::Node
 {
-  GDCLASS(BehaviourManager, Node)
+  GDCLASS(BehaviourManager, godot::Node)
 
-private:
-  std::vector<CharacterBody2D*> m_enemies;
-  std::vector<CharacterBody2D*> m_units;
+public:
+  std::vector<godot::CharacterBody2D*> m_enemies;
+  std::vector<godot::CharacterBody2D*> m_units;
   std::vector<UnitBlackBoard> m_boards;
   std::vector<ExecutionContext> m_executionContext;
   std::vector<EntityId> m_movingEntities;
@@ -69,17 +69,6 @@ public:
   void _process(double delta) override;
   void _physics_process(double delta) override;
   void _ready() override;
-
-  static BehaviourLib::Status FindTarget(BehaviourManager* manager,
-                                         UnitBlackBoard& blackboard);
-  static BehaviourLib::Status StartMove(BehaviourManager* manager,
-                                        UnitBlackBoard& blackboard);
-  static BehaviourLib::Status CheckIfArrived(BehaviourManager* manager,
-                                             UnitBlackBoard& blackboard);
-  static BehaviourLib::Status Pause(BehaviourManager* manager,
-                                    UnitBlackBoard& blackboard);
-  static BehaviourLib::Status Attack(BehaviourManager* manager,
-                                     UnitBlackBoard& blackboard);
 };
 
 } // namespace godot

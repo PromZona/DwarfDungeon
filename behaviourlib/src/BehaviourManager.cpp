@@ -1,8 +1,7 @@
 #include "BehaviourManager.h"
+#include "BehaviourActions.h"
 #include "BehaviourNodes.h"
-#include "enemy.h"
 
-#include <chrono>
 #include <cstdint>
 #include <cstdlib>
 #include <godot_cpp/classes/character_body2d.hpp>
@@ -21,13 +20,15 @@
 #include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/variant/variant.hpp>
-#include <limits>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
+namespace BehaviourLib
+{
 using namespace godot;
+
 
 void
 BehaviourManager::_bind_methods()
@@ -82,106 +83,14 @@ BehaviourManager::_ready()
   LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
 }
 
-BehaviourLib::Status
-BehaviourManager::FindTarget(BehaviourManager* manager,
-                             UnitBlackBoard& blackboard)
-{
-  CharacterBody2D* enemy = manager->m_enemies[blackboard.unit_id];
-  Vector2 enemy_pos = enemy->get_position();
-
-  float lowestDistance = std::numeric_limits<float>::max();
-  EntityId closestEntity = NULL_ENTITY;
-  for (int i = 0; i < manager->m_units.size(); i++) {
-    float distance = manager->m_units[i]->get_position().distance_to(enemy_pos);
-    if (distance < lowestDistance) {
-      closestEntity = EntityId(i);
-      lowestDistance = distance;
-    }
-  }
-  blackboard.target_unit_id = closestEntity;
-  UtilityFunctions::print("Find target action: ",
-                          blackboard.unit_id,
-                          "->",
-                          blackboard.target_unit_id);
-  return BehaviourLib::Status::SUCCESS;
-}
-
-BehaviourLib::Status
-BehaviourManager::StartMove(BehaviourManager* manager,
-                            UnitBlackBoard& blackboard)
-{
-  manager->m_movingEntities.push_back(blackboard.unit_id);
-  return BehaviourLib::Status::SUCCESS;
-}
-
-BehaviourLib::Status
-BehaviourManager::CheckIfArrived(BehaviourManager* manager,
-                                 UnitBlackBoard& blackboard)
-{
-  Enemy* enemy = static_cast<Enemy*>(manager->m_enemies[blackboard.unit_id]);
-  CharacterBody2D* targetUnit = manager->m_units[blackboard.target_unit_id];
-  float distance =
-    enemy->get_position().distance_to(targetUnit->get_position());
-
-  if (distance < enemy->AttackRadius) {
-    auto position = std::find(manager->m_movingEntities.begin(),
-                              manager->m_movingEntities.end(),
-                              blackboard.unit_id);
-
-    if (position != manager->m_movingEntities.end())
-      manager->m_movingEntities.erase(position);
-    return BehaviourLib::Status::SUCCESS;
-  }
-  return BehaviourLib::Status::RUNNING;
-}
-
-BehaviourLib::Status
-BehaviourManager::Pause(BehaviourManager* manager, UnitBlackBoard& blackboard)
-{
-  if (!blackboard.isWaiting) {
-
-    blackboard.timestamp = std::chrono::system_clock::now();
-    blackboard.isWaiting = true;
-  }
-  auto now = std::chrono::system_clock::now();
-  std::chrono::seconds duration =
-    std::chrono::duration_cast<std::chrono::seconds>(now -
-                                                     blackboard.timestamp);
-
-  if (duration.count() >= 5.0f) {
-    blackboard.isWaiting = false;
-    return BehaviourLib::Status::SUCCESS;
-  }
-  return BehaviourLib::Status::RUNNING;
-}
-
-BehaviourLib::Status
-BehaviourManager::Attack(BehaviourManager* manager, UnitBlackBoard& blackboard)
-{
-  Enemy* enemy = static_cast<Enemy*>(manager->m_enemies[blackboard.unit_id]);
-  if (!blackboard.isAttacking) {
-    CharacterBody2D* targetUnit = manager->m_units[blackboard.target_unit_id];
-    Vector2 targetPosition = targetUnit->get_position();
-    enemy->Attack(targetPosition);
-    blackboard.isAttacking = true;
-    return BehaviourLib::Status::RUNNING;
-  }
-
-  if (!enemy->IsAttacking()) {
-    blackboard.isAttacking = false;
-    return BehaviourLib::Status::SUCCESS;
-  }
-  return BehaviourLib::Status::RUNNING;
-}
-
 void
 BehaviourManager::RegisterActionTable()
 {
-  m_actionTable["FindTarget"] = &BehaviourManager::FindTarget;
-  m_actionTable["StartMove"] = &BehaviourManager::StartMove;
-  m_actionTable["CheckIfArrived"] = &BehaviourManager::CheckIfArrived;
-  m_actionTable["Pause"] = &BehaviourManager::Pause;
-  m_actionTable["Attack"] = &BehaviourManager::Attack;
+  m_actionTable["FindTarget"] = &BehaviourLib::FindTarget;
+  m_actionTable["StartMove"] = &BehaviourLib::StartMove;
+  m_actionTable["CheckIfArrived"] = &BehaviourLib::CheckIfArrived;
+  m_actionTable["Pause"] = &BehaviourLib::Pause;
+  m_actionTable["Attack"] = &BehaviourLib::Attack;
 }
 
 std::vector<std::string>
@@ -354,3 +263,4 @@ BehaviourManager::_physics_process(double delta)
     enemy->move_and_slide();
   }
 }
+} // namespace BehaviourLib

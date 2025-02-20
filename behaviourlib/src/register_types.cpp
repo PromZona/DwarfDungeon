@@ -17,8 +17,8 @@ initialize_example_module(ModuleInitializationLevel p_level)
     return;
   }
 
-  GDREGISTER_CLASS(Enemy);
-  GDREGISTER_CLASS(BehaviourManager);
+  GDREGISTER_CLASS(BehaviourLib::Enemy);
+  GDREGISTER_CLASS(BehaviourLib::BehaviourManager);
 }
 
 void

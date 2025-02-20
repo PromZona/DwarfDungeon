@@ -5,11 +5,11 @@
 #include <godot_cpp/classes/texture_progress_bar.hpp>
 #include <godot_cpp/classes/wrapped.hpp>
 
-namespace godot {
+namespace BehaviourLib {
 
-class Enemy : public CharacterBody2D
+class Enemy : public godot::CharacterBody2D
 {
-  GDCLASS(Enemy, CharacterBody2D)
+  GDCLASS(Enemy, godot::CharacterBody2D)
 public:
   float MaxHealth = 100.0f;
   float CurrentHealth = MaxHealth;
@@ -21,17 +21,17 @@ public:
   void _ready() override;
 
   void ReceiveDamage(float damage);
-  void Attack(Vector2 direction);
+  void Attack(godot::Vector2 direction);
   void ApplyDamage();
   bool IsAttacking();
 protected:
   static void _bind_methods();
 
 private:
-  TextureProgressBar* HealthBar = nullptr;
-  AnimationPlayer* AnimPlayer = nullptr;
+  godot::TextureProgressBar* HealthBar = nullptr;
+  godot::AnimationPlayer* AnimPlayer = nullptr;
   Node2D* AttackAreaHandler = nullptr;
   
-  Vector2 AttackDirection = {};
+  godot::Vector2 AttackDirection = {};
 };
 }

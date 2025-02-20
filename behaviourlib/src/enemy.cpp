@@ -7,6 +7,8 @@
 #include <godot_cpp/classes/shape_cast2d.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
+namespace BehaviourLib
+{
 using namespace godot;
 
 Enemy::Enemy()
@@ -82,3 +84,4 @@ Enemy::IsAttacking()
 {
   return AnimPlayer->is_playing();
 }
+} // namespace BehaviourLib

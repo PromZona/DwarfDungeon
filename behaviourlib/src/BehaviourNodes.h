@@ -1,21 +1,16 @@
 #pragma once
 
-#include "BehaviourManager.h"
-#include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <vector>
 
-namespace godot
-{
-  class BehaviourManager;
-  struct UnitBlackBoard;
-}
 
 // Action Node
 // Sequence Node
 // Selector Node
 namespace BehaviourLib {
+class BehaviourManager;
+struct UnitBlackBoard;
 
 using NodeId = int16_t;
 const NodeId EMPTY_NODE_ID = -1;
@@ -41,11 +36,11 @@ struct NodeRef
 };
 
 struct Node
-{ 
+{
   NodeId id;
   NodeType type;
   std::vector<NodeId> children;
-  std::function<Status(godot::BehaviourManager*, godot::UnitBlackBoard&)> Execute;
+  std::function<Status(BehaviourManager*, UnitBlackBoard&)> Execute;
 };
 
 struct Tree
