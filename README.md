@@ -33,7 +33,7 @@ If you want auto-detection of tools
 ```sh
 cmake -S . -G <Your Generator:ninja/make> -B <build directory>
 cd <build directory>
-<ninja/cmake> install
+<ninja/make> install
 ```
 > [!NOTE]
 > Building godot-cpp for the first time takes some time 
@@ -54,8 +54,12 @@ emcmake cmake --build --preset web-build
 ```
 
 3) Godot export
+
 3.1) Download default web template from godot.
+
 3.2) Set **Variant->Extension Support** to true
+
 3.3) Set **Progressive Web App->Enabled** to true (optional?)
+
 3.4) Press Export Project
 
