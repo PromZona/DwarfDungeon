@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} SHARED
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourNodes.h"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourManager.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourManager.h"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourActions.h"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/register_types.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/register_types.h"
 )
@@ -27,6 +28,33 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} godot-cpp)
 
+
+# Add compiler warning flags
+target_compile_options(${PROJECT_NAME} PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+    -Wshadow
+    -Wnon-virtual-dtor
+    -Woverloaded-virtual
+    -Wconversion
+    -Wsign-conversion
+    -Wnull-dereference
+    -Wuninitialized
+    -Wformat-security
+    -Wstrict-aliasing
+    -Wredundant-move
+    -Wmisleading-indentation
+    -Winline
+    -Wdeprecated
+    -Wthread-safety
+    -Watomic-alignment
+    -std=c++20
+    -O2
+    -g
+    -Wno-unused-parameter
+    -Wno-unused-function
+)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_SOURCE_DIR}/dwarfdungeon/bin)
 

@@ -12,14 +12,14 @@
 
 namespace BehaviourLib {
 
-typedef int64_t EntityId;
-const EntityId NULL_ENTITY = -1;
+using EntityId = uint64_t;
+const EntityId NULL_ENTITY = 1000; // TODO: Fix to some adequate way of identifying "No-unit" index
 
 struct UnitBlackBoard
 {
-  EntityId unit_id;
-  EntityId target_unit_id;
   std::chrono::system_clock::time_point timestamp;
+  EntityId unit_id{NULL_ENTITY};
+  EntityId target_unit_id{NULL_ENTITY};
   bool isWaiting = false;
   bool isAttacking = false;
 };
@@ -55,7 +55,7 @@ public:
     std::function<BehaviourLib::Status(BehaviourManager*, UnitBlackBoard&)>>
     m_actionTable;
 
-  BehaviourLib::Status ExecuteNode(const EntityId entityId);
+  BehaviourLib::Status ExecuteNode(EntityId entityId);
   void LoadAiTree(const std::string& filename);
   void RegisterActionTable();
 
@@ -64,8 +64,7 @@ protected:
 
 public:
   BehaviourManager();
-  ~BehaviourManager();
-
+  
   void _process(double delta) override;
   void _physics_process(double delta) override;
   void _ready() override;

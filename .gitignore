@@ -1,6 +1,6 @@
 # Directories
 /.cache
-/.clangd
+/.clangd/*
 /.vscode
 /build
 /dwarfdungeon/.godot

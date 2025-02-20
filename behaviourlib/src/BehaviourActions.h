@@ -15,7 +15,7 @@ FindTarget(BehaviourManager* manager, UnitBlackBoard& blackboard)
 
   float lowestDistance = std::numeric_limits<float>::max();
   EntityId closestEntity = NULL_ENTITY;
-  for (int i = 0; i < manager->m_units.size(); i++) {
+  for (size_t i = 0; i < manager->m_units.size(); i++) {
     float distance = manager->m_units[i]->get_position().distance_to(enemy_pos);
     if (distance < lowestDistance) {
       closestEntity = EntityId(i);
@@ -47,12 +47,13 @@ CheckIfArrived(BehaviourManager* manager, UnitBlackBoard& blackboard)
     enemy->get_position().distance_to(targetUnit->get_position());
 
   if (distance < enemy->AttackRadius) {
-    auto position = std::find(manager->m_movingEntities.begin(),
-                              manager->m_movingEntities.end(),
-                              blackboard.unit_id);
+    auto position =
+      std::ranges::find(manager->m_movingEntities, blackboard.unit_id);
 
-    if (position != manager->m_movingEntities.end())
+    if (position != manager->m_movingEntities.end()) {
+
       manager->m_movingEntities.erase(position);
+    }
     return BehaviourLib::Status::SUCCESS;
   }
   return BehaviourLib::Status::RUNNING;
@@ -71,7 +72,7 @@ Pause(BehaviourManager* manager, UnitBlackBoard& blackboard)
     std::chrono::duration_cast<std::chrono::seconds>(now -
                                                      blackboard.timestamp);
 
-  if (duration.count() >= 5.0f) {
+  if (duration.count() >= 5) {
     blackboard.isWaiting = false;
     return BehaviourLib::Status::SUCCESS;
   }

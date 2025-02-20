@@ -7,22 +7,15 @@
 #include <godot_cpp/classes/shape_cast2d.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
-namespace BehaviourLib
-{
+namespace BehaviourLib {
 using namespace godot;
 
 Enemy::Enemy()
-  : MaxHealth(100.0f)
-  , CurrentHealth(MaxHealth)
-  , AnimPlayer(nullptr)
-  , HealthBar(nullptr)
-  , AttackAreaHandler(nullptr)
 {
-  if (Engine::get_singleton()->is_editor_hint())
+  if (Engine::get_singleton()->is_editor_hint()) {
     set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+  }
 }
-
-Enemy::~Enemy() {}
 
 void
 Enemy::_bind_methods()
@@ -36,8 +29,9 @@ Enemy::_bind_methods()
 void
 Enemy::_ready()
 {
-  if (Engine::get_singleton()->is_editor_hint())
+  if (Engine::get_singleton()->is_editor_hint()) {
     return;
+  }
 
   HealthBar = get_node<TextureProgressBar>("HealthBar");
   AnimPlayer = get_node<AnimationPlayer>("AnimationPlayer");
@@ -74,8 +68,10 @@ Enemy::ApplyDamage()
   for (int i = 0; i < attackArea->get_collision_count(); i++) {
     Object* obj = attackArea->get_collider(i);
     CharacterBody2D* charachter = Object::cast_to<CharacterBody2D>(obj);
-    if (charachter)
-      UtilityFunctions::print("Attack in radius: ", this->get_name(), "->", charachter->get_name());
+    if (charachter != nullptr) {
+      UtilityFunctions::print(
+        "Attack in radius: ", this->get_name(), "->", charachter->get_name());
+    }
   }
 }
 

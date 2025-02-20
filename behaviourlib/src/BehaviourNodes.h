@@ -4,25 +4,22 @@
 #include <functional>
 #include <vector>
 
-
-// Action Node
-// Sequence Node
-// Selector Node
 namespace BehaviourLib {
+
 class BehaviourManager;
 struct UnitBlackBoard;
 
-using NodeId = int16_t;
-const NodeId EMPTY_NODE_ID = -1;
+using NodeId = uint16_t;
+const NodeId EMPTY_NODE_ID = 10000; // TODO: Fix this to somehing adequate
 
-enum class NodeType
+enum class NodeType : uint8_t
 {
   Action,
   Sequence,
   Selector
 };
 
-enum class Status
+enum class Status : uint8_t
 {
   FAILED,
   RUNNING,
@@ -47,7 +44,7 @@ struct Tree
 {
   BehaviourLib::NodeId root;
   BehaviourLib::Node* nodes;
-  int16_t nodesCount;
+  uint16_t nodesCount;
 };
 
 }; // namespace BehaviourLib

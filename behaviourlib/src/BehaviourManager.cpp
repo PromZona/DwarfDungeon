@@ -25,10 +25,8 @@
 #include <unordered_map>
 #include <vector>
 
-namespace BehaviourLib
-{
+namespace BehaviourLib {
 using namespace godot;
-
 
 void
 BehaviourManager::_bind_methods()
@@ -36,28 +34,22 @@ BehaviourManager::_bind_methods()
 }
 
 BehaviourManager::BehaviourManager()
-  : m_enemies()
-  , m_units()
-  , m_boards()
-  , m_executionContext()
-  , m_movingEntities()
-  , m_group(nullptr)
+  : m_group(nullptr)
   , m_tree()
-  , m_actionTable()
 {
-  if (Engine::get_singleton()->is_editor_hint())
+  if (Engine::get_singleton()->is_editor_hint()) {
     set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+  }
 
   RegisterActionTable();
 }
 
-BehaviourManager::~BehaviourManager() {}
-
 void
 BehaviourManager::_ready()
 {
-  if (Engine::get_singleton()->is_editor_hint())
+  if (Engine::get_singleton()->is_editor_hint()) {
     return;
+  }
   Node* parent = get_parent();
   TypedArray<Node> enemies = parent->find_children("Enemy*");
 
@@ -75,9 +67,13 @@ BehaviourManager::_ready()
   }
 
   for (uint32_t i = 0; i < m_enemies.size(); i++) {
-    UnitBlackBoard board{ .unit_id = i, .target_unit_id = NULL_ENTITY };
+    UnitBlackBoard board{ .timestamp = {},
+                          .unit_id = i,
+                          .target_unit_id = NULL_ENTITY,
+                          .isWaiting = false,
+                          .isAttacking = false };
     m_boards.push_back(board);
-    m_executionContext.push_back({ .stack = {} });
+    m_executionContext.emplace_back();
   }
 
   LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
@@ -111,7 +107,7 @@ BehaviourManager::ExecuteNode(const EntityId entityId)
   ExecutionContext& context = m_executionContext[entityId];
 
   if (context.stack.empty()) {
-    context.stack.push_back({ m_tree.root, 0 });
+    context.stack.push_back({ m_tree.root, 0, Status::FAILED });
   }
 
   while (!context.stack.empty()) {
@@ -131,7 +127,8 @@ BehaviourManager::ExecuteNode(const EntityId entityId)
             context.stack.back().lastChildStatus = frame.lastChildStatus;
           }
         } else {
-          context.stack.push_back({ node.children[frame.childIndex], 0 });
+          context.stack.push_back(
+            { node.children[frame.childIndex], 0, Status::FAILED });
           frame.childIndex++;
         }
         break;
@@ -143,10 +140,11 @@ BehaviourManager::ExecuteNode(const EntityId entityId)
         BehaviourLib::Status status = node.Execute(this, m_boards[entityId]);
         if (status == BehaviourLib::Status::RUNNING) {
           return status;
-        } else {
-          context.stack.pop_back();
-          context.stack.back().lastChildStatus = status;
         }
+
+        context.stack.pop_back();
+        context.stack.back().lastChildStatus = status;
+
         break;
       }
     }
@@ -158,10 +156,10 @@ void
 BehaviourManager::LoadAiTree(const std::string& filename)
 {
   Ref<FileAccess> file = FileAccess::open(filename.c_str(), FileAccess::READ);
-  String data = file->get_as_text();
+  String dataText = file->get_as_text();
   file->close();
 
-  std::string cool_string{ data.utf8() };
+  std::string cool_string{ dataText.utf8() };
 
   struct TempNodeData
   {
@@ -176,15 +174,18 @@ BehaviourManager::LoadAiTree(const std::string& filename)
   std::string line;
   std::istringstream dataStream(cool_string);
 
-  int nodesCount = 0;
+  NodeId nodesCount = 0;
   std::string rootIdString = {};
-  BehaviourLib::NodeId rootId = BehaviourLib::EMPTY_NODE_ID;
+  NodeId rootId = BehaviourLib::EMPTY_NODE_ID;
   while (std::getline(dataStream, line)) {
-    if (line.empty() || line[0] == '[')
+    if (line.empty() || line[0] == '[') {
       continue;
+    }
 
     std::istringstream lineStream(line);
-    std::string id, type, data;
+    std::string id;
+    std::string type;
+    std::string data;
 
     lineStream >> id >> type >> data;
 
@@ -243,6 +244,9 @@ BehaviourManager::_process(double delta)
 {
   for (EntityId id = 0; id < m_enemies.size(); id++) {
     BehaviourLib::Status status = ExecuteNode(id);
+
+    // TODO: Do something with status? (this line is to disable warning)
+    (void)status;
   }
 }
 
@@ -252,8 +256,9 @@ BehaviourManager::_physics_process(double delta)
   for (EntityId id : m_movingEntities) {
     UnitBlackBoard& board = m_boards[id];
 
-    if (board.target_unit_id == NULL_ENTITY)
+    if (board.target_unit_id == NULL_ENTITY) {
       continue;
+    }
 
     CharacterBody2D* enemy = m_enemies[id];
     const CharacterBody2D* target_unit = m_units[board.target_unit_id];

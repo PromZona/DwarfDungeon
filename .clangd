@@ -1,0 +1,38 @@
+If:
+  PathExclude: .*/godot-cpp/.*
+Diagnostics:
+  ClangTidy:
+    Add: [bugprone-*, performance-*, readability-*, modernize-*, cppcoreguidelines-*]
+    Remove:
+      - readability-identifier-length
+      - readability-uppercase-literal-suffix
+      - modernize-use-auto
+      - modernize-use-trailing-return-type
+      - cppcoreguidelines-non-private-member-variables-in-classes
+      - cppcoreguidelines-pro-bounds-pointer-arithmetic
+      - cppcoreguidelines-owning-memory
+CompileFlags:
+  Add:
+    - -Wall
+    - -Wextra
+    - -Wpedantic
+    - -Wshadow
+    - -Wnon-virtual-dtor
+    - -Woverloaded-virtual
+    - -Wconversion
+    - -Wsign-conversion
+    - -Wnull-dereference
+    - -Wuninitialized
+    - -Wformat-security
+    - -Wstrict-aliasing
+    - -Wredundant-move
+    - -Wmisleading-indentation
+    - -Winline
+    - -Wdeprecated
+    - -Wthread-safety
+    - -Watomic-alignment
+    - -std=c++20
+    - -O2
+    - -g
+    - -Wno-unused-parameter
+    - -Wno-unused-function

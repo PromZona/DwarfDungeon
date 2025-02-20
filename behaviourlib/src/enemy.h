@@ -11,13 +11,12 @@ class Enemy : public godot::CharacterBody2D
 {
   GDCLASS(Enemy, godot::CharacterBody2D)
 public:
-  float MaxHealth = 100.0f;
+  float MaxHealth = 100.0F;
   float CurrentHealth = MaxHealth;
-  float AttackRadius = 32.0f + 8.0f;
+  float AttackRadius = 32.0F + 8.0F;
 
   Enemy();
-  ~Enemy();
-
+  
   void _ready() override;
 
   void ReceiveDamage(float damage);
@@ -32,6 +31,6 @@ private:
   godot::AnimationPlayer* AnimPlayer = nullptr;
   Node2D* AttackAreaHandler = nullptr;
   
-  godot::Vector2 AttackDirection = {};
+  godot::Vector2 AttackDirection;
 };
 }
