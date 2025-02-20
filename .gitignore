@@ -8,9 +8,11 @@
 
 # Specific files
 /dwarfdungeon/bin/*.dll*
+/dwarfdungeon/bin/game_build/*
 extension_api.json
 CMakeUserPresets.json
 
 # Extensions
 *.obj
 *.so
+*.wasm

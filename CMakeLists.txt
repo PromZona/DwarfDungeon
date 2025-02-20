@@ -4,7 +4,7 @@ project(DwarfDungeon)
 
 add_subdirectory(godot-cpp)
 
-add_library(${PROJECT_NAME} SHARED
+set (SOURCES
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/enemy.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/enemy.h"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourNodes.h"
@@ -14,6 +14,23 @@ add_library(${PROJECT_NAME} SHARED
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/register_types.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/register_types.h"
 )
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
+		# Web Emscriten flags are partially from here: https://thatonegamedev.com/cpp/cmake/godot-native-using-cmake/#porting-for-web
+		# And of course official docs
+		# https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_web.html#building-export-templates
+		# https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_web.html
+		
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s ASSERTIONS=1 -s SIDE_MODULE=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1 -s SIDE_MODULE=1")
+    set(CMAKE_EXECUTABLE_SUFFIX ".wasm")
+		set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+
+    add_executable(${PROJECT_NAME} ${SOURCES})
+else()
+    add_library(${PROJECT_NAME} SHARED ${SOURCES})
+endif()
+
 
 # Set the library filename so it matches what I've copied into the .gdextension file
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -55,6 +72,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     -Wno-unused-parameter
     -Wno-unused-function
 )
+
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_SOURCE_DIR}/dwarfdungeon/bin)
 

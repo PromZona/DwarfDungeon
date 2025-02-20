@@ -28,6 +28,16 @@
 				"CMAKE_C_COMPILER": "clang",
 				"CMAKE_CXX_COMPILER": "clang++"
 			}
+		},
+		{
+			"name": "debug-web",
+			"inherits": "common",
+			"generator": "Ninja",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"CMAKE_C_COMPILER": "emcc",
+				"CMAKE_CXX_COMPILER": "em++"
+			}
 		}
 	]
 }
