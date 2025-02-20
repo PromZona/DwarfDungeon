@@ -6,7 +6,9 @@ A Game.
 - godot v4.3
 - ninja
 - clang++ compiler
-Compiler and generator can be overwritten with CMakeUserPresets.json file if required.
+
+> [!NOTE]
+> Compiler and generator can be overwritten with CMakeUserPresets.json file if required.
 
 ## Build
 1) Clone Repository and Submodules
@@ -26,6 +28,7 @@ cmake --preset debug-clang
 cd build
 ninja install
 ```
-Building godot-cpp for the first time takes some time 
+> [!NOTE]
+> Building godot-cpp for the first time takes some time 
 
 4) Run godot project
