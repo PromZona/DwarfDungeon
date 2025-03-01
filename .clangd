@@ -1,16 +1,15 @@
 If:
   PathExclude: .*/godot-cpp/.*
+CompileFlags:
+  CompilationDatabase: build/clang/debug/
 Diagnostics:
   ClangTidy:
-    Add: [bugprone-*, performance-*, readability-*, modernize-*, cppcoreguidelines-*]
+    Add: [bugprone-*, performance-*, readability-*, modernize-*]
     Remove:
       - readability-identifier-length
       - readability-uppercase-literal-suffix
       - modernize-use-auto
       - modernize-use-trailing-return-type
-      - cppcoreguidelines-non-private-member-variables-in-classes
-      - cppcoreguidelines-pro-bounds-pointer-arithmetic
-      - cppcoreguidelines-owning-memory
 CompileFlags:
   Add:
     - -Wall

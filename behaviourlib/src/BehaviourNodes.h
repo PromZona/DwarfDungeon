@@ -6,6 +6,7 @@
 
 namespace BehaviourLib {
 
+class Game;
 class BehaviourManager;
 struct UnitBlackBoard;
 
@@ -37,7 +38,7 @@ struct Node
   NodeId id;
   NodeType type;
   std::vector<NodeId> children;
-  std::function<Status(BehaviourManager*, UnitBlackBoard&)> Execute;
+  std::function<Status(Game&, UnitBlackBoard&)> Execute;
 };
 
 struct Tree

@@ -1,6 +1,8 @@
 #include "BehaviourManager.h"
 #include "BehaviourActions.h"
 #include "BehaviourNodes.h"
+#include "EntityManager.h"
+#include "Game.h"
 
 #include <cstdint>
 #include <cstdlib>
@@ -39,8 +41,9 @@ BehaviourManager::BehaviourManager()
 {
   if (Engine::get_singleton()->is_editor_hint()) {
     set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+    return;
   }
-
+  UtilityFunctions::print("Behaviour Manager Constructor");
   RegisterActionTable();
 }
 
@@ -50,33 +53,10 @@ BehaviourManager::_ready()
   if (Engine::get_singleton()->is_editor_hint()) {
     return;
   }
+  UtilityFunctions::print("Behaviour Manager Constructor");
   Node* parent = get_parent();
-  TypedArray<Node> enemies = parent->find_children("Enemy*");
 
-  m_group = parent->find_child("Group");
-  TypedArray<Node> units = (TypedArray<Node>)m_group->get("Units");
-
-  for (int i = 0; i < enemies.size(); i++) {
-    CharacterBody2D* p = Object::cast_to<CharacterBody2D>(enemies[i]);
-    m_enemies.push_back(p);
-  }
-
-  for (int i = 0; i < units.size(); i++) {
-    CharacterBody2D* p = Object::cast_to<CharacterBody2D>(units[i]);
-    m_units.push_back(p);
-  }
-
-  for (uint32_t i = 0; i < m_enemies.size(); i++) {
-    UnitBlackBoard board{ .timestamp = {},
-                          .unit_id = i,
-                          .target_unit_id = NULL_ENTITY,
-                          .isWaiting = false,
-                          .isAttacking = false };
-    m_boards.push_back(board);
-    m_executionContext.emplace_back();
-  }
-
-  LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
+  // m_group = parent->find_child("Group");
 }
 
 void
@@ -87,6 +67,30 @@ BehaviourManager::RegisterActionTable()
   m_actionTable["CheckIfArrived"] = &BehaviourLib::CheckIfArrived;
   m_actionTable["Pause"] = &BehaviourLib::Pause;
   m_actionTable["Attack"] = &BehaviourLib::Attack;
+}
+
+void
+BehaviourManager::RegisterDependencies(Game* game, EntityManager* entityManager)
+{
+  m_Game = game;
+  m_entityManager = entityManager;
+}
+
+void
+BehaviourManager::PreGameStart()
+{
+  godot::Vector<Enemy*>& enemies = m_entityManager->GetAllEnemies();
+  for (uint32_t i = 0; i < enemies.size(); i++) {
+    UnitBlackBoard board{ .timestamp = {},
+                          .unit_id = i,
+                          .target_unit_id = NULL_ENTITY,
+                          .isWaiting = false,
+                          .isAttacking = false };
+    m_boards.push_back(board);
+    m_executionContext.emplace_back();
+  }
+
+  LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
 }
 
 std::vector<std::string>
@@ -137,7 +141,7 @@ BehaviourManager::ExecuteNode(const EntityId entityId)
         break;
       }
       case BehaviourLib::NodeType::Action: {
-        BehaviourLib::Status status = node.Execute(this, m_boards[entityId]);
+        BehaviourLib::Status status = node.Execute(*m_Game, m_boards[entityId]);
         if (status == BehaviourLib::Status::RUNNING) {
           return status;
         }
@@ -242,7 +246,8 @@ BehaviourManager::LoadAiTree(const std::string& filename)
 void
 BehaviourManager::_process(double delta)
 {
-  for (EntityId id = 0; id < m_enemies.size(); id++) {
+  auto enemies = m_entityManager->GetActiveEnemies();
+  for (EntityId id : enemies) {
     BehaviourLib::Status status = ExecuteNode(id);
 
     // TODO: Do something with status? (this line is to disable warning)
@@ -253,6 +258,9 @@ BehaviourManager::_process(double delta)
 void
 BehaviourManager::_physics_process(double delta)
 {
+  return;
+  /*
+  auto enemies = m_entityManager->GetEnemies();
   for (EntityId id : m_movingEntities) {
     UnitBlackBoard& board = m_boards[id];
 
@@ -260,12 +268,13 @@ BehaviourManager::_physics_process(double delta)
       continue;
     }
 
-    CharacterBody2D* enemy = m_enemies[id];
+    CharacterBody2D* enemy = enemies[id];
     const CharacterBody2D* target_unit = m_units[board.target_unit_id];
     const Vector2 direction =
       enemy->get_position().direction_to(target_unit->get_position());
     enemy->set_velocity(direction * 10.0f);
     enemy->move_and_slide();
   }
+  */
 }
 } // namespace BehaviourLib

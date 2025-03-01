@@ -1,5 +1,9 @@
 #pragma once
 #include "BehaviourManager.h"
+#include "BehaviourNodes.h"
+#include "EntityManager.h"
+#include "Game.h"
+#include "MovementManager.h"
 #include "enemy.h"
 #include <algorithm>
 #include <godot_cpp/classes/character_body2d.hpp>
@@ -8,20 +12,29 @@
 namespace BehaviourLib {
 
 static BehaviourLib::Status
-FindTarget(BehaviourManager* manager, UnitBlackBoard& blackboard)
+FindTarget(Game& game, UnitBlackBoard& blackboard)
 {
-  godot::CharacterBody2D* enemy = manager->m_enemies[blackboard.unit_id];
+  auto playerUnits = game.EntityManager->GetPlayerUnits();
+
+  godot::CharacterBody2D* enemy =
+    game.EntityManager->GetEnemy(blackboard.unit_id);
   godot::Vector2 enemy_pos = enemy->get_position();
 
   float lowestDistance = std::numeric_limits<float>::max();
   EntityId closestEntity = NULL_ENTITY;
-  for (size_t i = 0; i < manager->m_units.size(); i++) {
-    float distance = manager->m_units[i]->get_position().distance_to(enemy_pos);
+  for (size_t i = 0; i < playerUnits.size(); i++) {
+    float distance = playerUnits[i]->get_position().distance_to(enemy_pos);
     if (distance < lowestDistance) {
       closestEntity = EntityId(i);
       lowestDistance = distance;
     }
   }
+  if (closestEntity == NULL_ENTITY) {
+    godot::UtilityFunctions::print(
+      "Find Target: Failed to find unit to follow");
+    return Status::FAILED;
+  }
+
   blackboard.target_unit_id = closestEntity;
   godot::UtilityFunctions::print("Find target action: ",
                                  blackboard.unit_id,
@@ -31,36 +44,32 @@ FindTarget(BehaviourManager* manager, UnitBlackBoard& blackboard)
 }
 
 static BehaviourLib::Status
-StartMove(BehaviourManager* manager, UnitBlackBoard& blackboard)
+StartMove(Game& game, UnitBlackBoard& blackboard)
 {
-  manager->m_movingEntities.push_back(blackboard.unit_id);
+  game.MovementManager->m_MovingEntities.push_back(blackboard.unit_id);
   return BehaviourLib::Status::SUCCESS;
 }
 
 static BehaviourLib::Status
-CheckIfArrived(BehaviourManager* manager, UnitBlackBoard& blackboard)
+CheckIfArrived(Game& game, UnitBlackBoard& blackboard)
 {
-  Enemy* enemy = static_cast<Enemy*>(manager->m_enemies[blackboard.unit_id]);
-  godot::CharacterBody2D* targetUnit =
-    manager->m_units[blackboard.target_unit_id];
+  auto playerUnits = game.EntityManager->GetPlayerUnits();
+  MovementManager* manager = game.MovementManager;
+
+  Enemy* enemy = game.EntityManager->GetEnemy(blackboard.unit_id);
+  godot::CharacterBody2D* targetUnit = playerUnits[blackboard.target_unit_id];
   float distance =
     enemy->get_position().distance_to(targetUnit->get_position());
 
   if (distance < enemy->AttackRadius) {
-    auto position =
-      std::ranges::find(manager->m_movingEntities, blackboard.unit_id);
-
-    if (position != manager->m_movingEntities.end()) {
-
-      manager->m_movingEntities.erase(position);
-    }
+    manager->m_MovingEntities.erase(blackboard.unit_id);
     return BehaviourLib::Status::SUCCESS;
   }
   return BehaviourLib::Status::RUNNING;
 }
 
 static BehaviourLib::Status
-Pause(BehaviourManager* manager, UnitBlackBoard& blackboard)
+Pause(Game& game, UnitBlackBoard& blackboard)
 {
   if (!blackboard.isWaiting) {
 
@@ -80,12 +89,13 @@ Pause(BehaviourManager* manager, UnitBlackBoard& blackboard)
 }
 
 static BehaviourLib::Status
-Attack(BehaviourManager* manager, UnitBlackBoard& blackboard)
+Attack(Game& game, UnitBlackBoard& blackboard)
 {
-  Enemy* enemy = static_cast<Enemy*>(manager->m_enemies[blackboard.unit_id]);
+  auto playerUnits = game.EntityManager->GetPlayerUnits();
+
+  Enemy* enemy = game.EntityManager->GetEnemy(blackboard.unit_id);
   if (!blackboard.isAttacking) {
-    godot::CharacterBody2D* targetUnit =
-      manager->m_units[blackboard.target_unit_id];
+    godot::CharacterBody2D* targetUnit = playerUnits[blackboard.target_unit_id];
     godot::Vector2 targetPosition = targetUnit->get_position();
     enemy->Attack(targetPosition);
     blackboard.isAttacking = true;

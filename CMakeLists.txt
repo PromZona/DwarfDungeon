@@ -5,15 +5,15 @@ project(DwarfDungeon)
 add_subdirectory(godot-cpp)
 
 set (SOURCES
-	"${CMAKE_SOURCE_DIR}/behaviourlib/src/enemy.cpp"
-	"${CMAKE_SOURCE_DIR}/behaviourlib/src/enemy.h"
-	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourNodes.h"
-	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourManager.cpp"
-	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourManager.h"
-	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourActions.h"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/register_types.cpp"
-	"${CMAKE_SOURCE_DIR}/behaviourlib/src/register_types.h"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/SpawnManager.cpp"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/EntityManager.cpp"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/enemy.cpp"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/BehaviourManager.cpp"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/Game.cpp"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/MovementManager.cpp"
 )
+
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
 		# Web Emscriten flags are partially from here: https://thatonegamedev.com/cpp/cmake/godot-native-using-cmake/#porting-for-web
@@ -35,6 +35,10 @@ endif()
 # Set the library filename so it matches what I've copied into the .gdextension file
 set_target_properties(${PROJECT_NAME} PROPERTIES
                       OUTPUT_NAME   ${PROJECT_NAME}.$<LOWER_CASE:$<PLATFORM_ID>>.template_$<LOWER_CASE:$<CONFIG>>.x86_64
+)
+
+target_include_directories(${PROJECT_NAME} 
+    PRIVATE ${CMAKE_SOURCE_DIR}/behaviourlib/src
 )
 
 # Flags for linking depending library statically for Windows

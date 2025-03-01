@@ -16,13 +16,14 @@ public:
   float AttackRadius = 32.0F + 8.0F;
 
   Enemy();
-  
+
   void _ready() override;
 
   void ReceiveDamage(float damage);
   void Attack(godot::Vector2 direction);
   void ApplyDamage();
   bool IsAttacking();
+
 protected:
   static void _bind_methods();
 
@@ -30,7 +31,7 @@ private:
   godot::TextureProgressBar* HealthBar = nullptr;
   godot::AnimationPlayer* AnimPlayer = nullptr;
   Node2D* AttackAreaHandler = nullptr;
-  
+
   godot::Vector2 AttackDirection;
 };
 }

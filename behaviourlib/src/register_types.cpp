@@ -1,6 +1,9 @@
 #include "register_types.h"
 
 #include "BehaviourManager.h"
+#include "EntityManager.h"
+#include "Game.h"
+#include "SpawnManager.h"
 #include "enemy.h"
 
 #include <gdextension_interface.h>
@@ -17,8 +20,11 @@ initialize_example_module(ModuleInitializationLevel p_level)
     return;
   }
 
-  GDREGISTER_CLASS(BehaviourLib::Enemy);
+  GDREGISTER_CLASS(BehaviourLib::Game);
+  GDREGISTER_CLASS(BehaviourLib::SpawnManager);
+  GDREGISTER_CLASS(BehaviourLib::EntityManager);
   GDREGISTER_CLASS(BehaviourLib::BehaviourManager);
+  GDREGISTER_CLASS(BehaviourLib::Enemy);
 }
 
 void
