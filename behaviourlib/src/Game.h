@@ -4,6 +4,7 @@
 #include "EntityManager.h"
 #include "MovementManager.h"
 #include "SpawnManager.h"
+#include <godot_cpp/classes/input_event.hpp>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
@@ -23,8 +24,11 @@ public:
   void PostRegisterManagers();
   void PreGameStart();
 
+  void LoadScene(godot::String);
+
   void _ready() override;
   void _physics_process(double delta) override;
+  void _input(const godot::Ref<godot::InputEvent>& event) override;
 
   EntityManager* EntityManager;
   MovementManager* MovementManager;

@@ -16,26 +16,28 @@ zoom = Vector2(2, 2)
 script = ExtResource("2_cy2b8")
 GroupToFollow = NodePath("../EntityManager/Group")
 
-[node name="obstacle" type="StaticBody2D" parent="."]
+[node name="StaticEnvironment" type="Node" parent="."]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="StaticEnvironment"]
 position = Vector2(-186.5, -93.5)
 
-[node name="Icon" type="Sprite2D" parent="obstacle"]
+[node name="Icon2" type="Sprite2D" parent="StaticEnvironment/StaticBody2D"]
+position = Vector2(370.5, 157.5)
+texture = ExtResource("2_7i657")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticEnvironment/StaticBody2D"]
+position = Vector2(370.5, 157.5)
+shape = SubResource("RectangleShape2D_cogig")
+
+[node name="obstacle" type="StaticBody2D" parent="StaticEnvironment"]
+position = Vector2(-186.5, -93.5)
+
+[node name="Icon" type="Sprite2D" parent="StaticEnvironment/obstacle"]
 position = Vector2(-0.5, 0.5)
 texture = ExtResource("2_7i657")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="obstacle"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticEnvironment/obstacle"]
 position = Vector2(-1.5, 2.5)
-shape = SubResource("RectangleShape2D_cogig")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
-position = Vector2(-186.5, -93.5)
-
-[node name="Icon2" type="Sprite2D" parent="StaticBody2D"]
-position = Vector2(370.5, 157.5)
-texture = ExtResource("2_7i657")
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(370.5, 157.5)
 shape = SubResource("RectangleShape2D_cogig")
 
 [node name="BehaviourManager" type="BehaviourManager" parent="."]
