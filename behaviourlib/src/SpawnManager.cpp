@@ -26,6 +26,10 @@ double deltaAccumulated = 0.0f;
 void
 SpawnManager::_process(double delta)
 {
+  if (!m_isActive) {
+    return;
+  }
+
   if (godot::Engine::get_singleton()->is_editor_hint()) {
     return;
   }

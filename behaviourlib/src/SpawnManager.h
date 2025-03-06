@@ -22,6 +22,7 @@ public:
   int m_spawnCountTarget = 3;
   int m_currentSpawnCount = 0;
   EntityManager* m_EntityManger;
+  bool m_isActive = false;
 };
 
 } // namespace BehaviourLib

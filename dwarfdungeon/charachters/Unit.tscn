@@ -95,6 +95,11 @@ _data = {
 collision_layer = 2
 script = ExtResource("1_lorbv")
 Damage = 5.0
+Speed = 60
+FormationCloseEnoughDistance = 15.0
+FormationMaxSpeedDistance = 150.0
+FormationMinSpeedCoefficient = 0.3
+FormationMaxSpeedCoefficient = 1.2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 z_index = 1

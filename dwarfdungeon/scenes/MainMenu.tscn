@@ -1,0 +1,70 @@
+[gd_scene load_steps=3 format=3 uid="uid://gpirtxgb8r2r"]
+
+[ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="1_hbwvb"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_bl24b"]
+font_size = 32
+font_color = Color(0.352941, 1, 1, 1)
+
+[node name="MainMenu" type="CanvasLayer"]
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Main Menu"
+label_settings = SubResource("LabelSettings_bl24b")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_right = 160.0
+grow_vertical = 2
+alignment = 1
+
+[node name="StartButton" type="Button" parent="UI/VBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+text = "Start"
+
+[node name="OptionsButton" type="Button" parent="UI/VBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+text = "Options
+"
+
+[node name="ExitButton" type="Button" parent="UI/VBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+text = "Exit
+"
+
+[node name="TextureRect" type="TextureRect" parent="UI"]
+modulate = Color(0.821153, 0.421809, 0.327458, 0.411765)
+z_index = -1
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_hbwvb")

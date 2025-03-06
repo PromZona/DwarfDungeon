@@ -1,20 +1,16 @@
-[gd_scene load_steps=6 format=3 uid="uid://c2rdv57n283at"]
+[gd_scene load_steps=4 format=3 uid="uid://c2rdv57n283at"]
 
-[ext_resource type="PackedScene" uid="uid://chym3vdoe3mpi" path="res://charachters/Unit.tscn" id="1_1p7cj"]
 [ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="2_7i657"]
 [ext_resource type="Script" path="res://scripts/camera.gd" id="2_cy2b8"]
-[ext_resource type="PackedScene" uid="uid://dpd2w5jp63a4r" path="res://charachters/Group.tscn" id="2_uci2j"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cogig"]
 size = Vector2(119, 121)
 
 [node name="main_scene" type="Game"]
 
-[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("GroupToFollow")]
+[node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-10.5, -38)
-zoom = Vector2(2, 2)
 script = ExtResource("2_cy2b8")
-GroupToFollow = NodePath("../EntityManager/Group")
 
 [node name="StaticEnvironment" type="Node" parent="."]
 
@@ -43,41 +39,5 @@ shape = SubResource("RectangleShape2D_cogig")
 [node name="BehaviourManager" type="BehaviourManager" parent="."]
 
 [node name="EntityManager" type="EntityManager" parent="."]
-
-[node name="Group" parent="EntityManager" node_paths=PackedStringArray("Units") instance=ExtResource("2_uci2j")]
-Speed = 100.0
-Units = [NodePath("../Unit"), NodePath("../Unit2"), NodePath("../Unit3"), NodePath("../Unit4")]
-
-[node name="Unit4" parent="EntityManager" instance=ExtResource("1_1p7cj")]
-position = Vector2(72, 67)
-Speed = 60
-FormationCloseEnoughDistance = 15.0
-FormationMaxSpeedDistance = 150.0
-FormationMinSpeedCoefficient = 0.3
-FormationMaxSpeedCoefficient = 1.2
-
-[node name="Unit3" parent="EntityManager" instance=ExtResource("1_1p7cj")]
-position = Vector2(-175, 45)
-Speed = 60
-FormationCloseEnoughDistance = 15.0
-FormationMaxSpeedDistance = 150.0
-FormationMinSpeedCoefficient = 0.3
-FormationMaxSpeedCoefficient = 1.2
-
-[node name="Unit2" parent="EntityManager" instance=ExtResource("1_1p7cj")]
-position = Vector2(108, -91)
-Speed = 60
-FormationCloseEnoughDistance = 15.0
-FormationMaxSpeedDistance = 150.0
-FormationMinSpeedCoefficient = 0.3
-FormationMaxSpeedCoefficient = 1.2
-
-[node name="Unit" parent="EntityManager" instance=ExtResource("1_1p7cj")]
-position = Vector2(-8, -144)
-Speed = 60
-FormationCloseEnoughDistance = 15.0
-FormationMaxSpeedDistance = 150.0
-FormationMinSpeedCoefficient = 0.3
-FormationMaxSpeedCoefficient = 1.2
 
 [node name="SpawnManager" type="SpawnManager" parent="."]

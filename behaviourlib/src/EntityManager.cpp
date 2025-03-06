@@ -7,6 +7,7 @@
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/core/memory.hpp>
+#include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 namespace BehaviourLib {
@@ -77,6 +78,7 @@ EntityManager::_ready()
     return;
   }
 
+  // INITIALIZE ENEMIES
   m_enemyScene = godot::ResourceLoader::get_singleton()->load(
     "res://charachters/Enemy.tscn", "PackedScene");
   if (!m_enemyScene.is_valid()) {
@@ -91,15 +93,39 @@ EntityManager::_ready()
     m_enemies.push_back(enemy);
   }
 
-  Node* group = find_child("Group");
-  godot::TypedArray<godot::Node> units =
-    (godot::TypedArray<godot::Node>)group->get("Units");
-
-  for (int i = 0; i < units.size(); i++) {
-    godot::CharacterBody2D* p =
-      Object::cast_to<godot::CharacterBody2D>(units[i]);
-    m_playerUnits.push_back(p);
+  // INITIALIZE PLAYER UNITS
+  m_playerUnitScene = godot::ResourceLoader::get_singleton()->load(
+    "res://charachters/Unit.tscn", "PackedScene");
+  if (!m_playerUnitScene.is_valid()) {
+    godot::UtilityFunctions::print("Error: Failed to find Enemy scene");
+    return;
   }
+
+  for (int i = 0; i < 4; i++) {
+    godot::CharacterBody2D* unit =
+      Object::cast_to<godot::CharacterBody2D>(m_playerUnitScene->instantiate());
+    unit->set_visible(false);
+    unit->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+    m_playerUnits.push_back(unit);
+  }
+
+  // INITIALIZE GROUP
+  m_groupScene = godot::ResourceLoader::get_singleton()->load(
+    "res://charachters/Group.tscn", "PackedScene");
+  if (!m_groupScene.is_valid()) {
+    godot::UtilityFunctions::print("Error: Failed to find Enemy scene");
+    return;
+  }
+  m_Group = Object::cast_to<godot::Node2D>(m_groupScene->instantiate());
+  m_Group->set_visible(false);
+  m_Group->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+
+  godot::Array arr{};
+  arr.push_back(m_playerUnits[0]);
+  arr.push_back(m_playerUnits[1]);
+  arr.push_back(m_playerUnits[2]);
+  arr.push_back(m_playerUnits[3]);
+  m_Group->set("Units", arr);
 }
 
 void

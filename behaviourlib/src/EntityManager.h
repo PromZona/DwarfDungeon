@@ -4,6 +4,7 @@
 
 #include <godot_cpp/classes/character_body2d.hpp>
 #include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/templates/vector.hpp>
 #include <godot_cpp/variant/array.hpp>
@@ -36,11 +37,14 @@ public:
 
 private:
   godot::Ref<godot::PackedScene> m_enemyScene;
+  godot::Ref<godot::PackedScene> m_playerUnitScene;
+  godot::Ref<godot::PackedScene> m_groupScene;
   godot::Vector<Enemy*> m_enemies;
   godot::Vector<EntityId> m_ActiveEnemies;
-  size_t m_enemiesCount;
-
   godot::Vector<godot::CharacterBody2D*> m_playerUnits;
+  godot::Node2D* m_Group;
+
+  size_t m_enemiesCount;
 
   const uint16_t m_MaxEnemyCount = 100;
 };

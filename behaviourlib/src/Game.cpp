@@ -32,6 +32,7 @@ Game::RegisterManagers()
   this->SpawnManager =
     (BehaviourLib::SpawnManager*)find_child("SpawnManager", false);
   this->MovementManager = memnew(class MovementManager);
+  this->UIManager = memnew(class UIManager);
 }
 
 void
@@ -41,11 +42,13 @@ Game::PostRegisterManagers()
   MovementManager->RegisterDependencies(EntityManager, BehaviourManager);
   BehaviourManager->RegisterDependencies(this, EntityManager);
   SpawnManager->RegisterDependencies(EntityManager);
+  UIManager->RegisterDependencies(this);
 }
 
 void
 Game::PreGameStart()
 {
+  godot::UtilityFunctions::print("Game: Pre Game Start");
   BehaviourManager->PreGameStart();
 }
 
@@ -53,6 +56,9 @@ void
 Game::LoadScene(godot::String sceneName)
 {
   using namespace godot;
+
+  UtilityFunctions::print("Loading scene... : ", sceneName);
+
   Ref<PackedScene> scene = ResourceLoader::get_singleton()->load(sceneName);
   if (scene.is_null() || !scene.is_valid()) {
 
@@ -83,6 +89,9 @@ Game::LoadScene(godot::String sceneName)
   }
 
   staticScene->add_child(sceneInstance);
+
+  UIManager->UpdateUiBindings(sceneInstance);
+  UtilityFunctions::print("Scene Loaded!");
 }
 
 void
@@ -96,6 +105,8 @@ Game::_ready()
   RegisterManagers();
   PostRegisterManagers();
   PreGameStart();
+
+  LoadScene("res://scenes/MainMenu.tscn");
   godot::UtilityFunctions::print("Game: Initialization End");
 }
 
@@ -124,6 +135,11 @@ Game::_input(const godot::Ref<godot::InputEvent>& event)
   } else if (eventKey->get_keycode() == godot::KEY_2) {
     LoadScene("res://scenes/Level_2.tscn");
   }
+}
+
+void
+Game::StartGameButtonPressed()
+{
 }
 
 } // namespace Behaviourlib
