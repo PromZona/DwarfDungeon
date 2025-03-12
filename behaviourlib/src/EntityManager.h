@@ -32,6 +32,8 @@ public:
   godot::Vector<Enemy*>& GetAllEnemies();
   godot::Vector<godot::CharacterBody2D*>& GetPlayerUnits();
 
+  void ActivatePlayerUnits();
+
   void _ready() override;
   void _process(double delta) override;
 
@@ -39,13 +41,14 @@ private:
   godot::Ref<godot::PackedScene> m_enemyScene;
   godot::Ref<godot::PackedScene> m_playerUnitScene;
   godot::Ref<godot::PackedScene> m_groupScene;
+
   godot::Vector<Enemy*> m_enemies;
   godot::Vector<EntityId> m_ActiveEnemies;
   godot::Vector<godot::CharacterBody2D*> m_playerUnits;
+
   godot::Node2D* m_Group;
 
   size_t m_enemiesCount;
-
   const uint16_t m_MaxEnemyCount = 100;
 };
 

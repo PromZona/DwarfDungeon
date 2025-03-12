@@ -4,10 +4,12 @@
 #include <godot_cpp/classes/character_body2d.hpp>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/global_constants.hpp>
+#include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/core/memory.hpp>
 #include <godot_cpp/variant/array.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 namespace BehaviourLib {
@@ -120,12 +122,25 @@ EntityManager::_ready()
   m_Group->set_visible(false);
   m_Group->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
 
-  godot::Array arr{};
-  arr.push_back(m_playerUnits[0]);
-  arr.push_back(m_playerUnits[1]);
-  arr.push_back(m_playerUnits[2]);
-  arr.push_back(m_playerUnits[3]);
+  godot::TypedArray<godot::CharacterBody2D> arr{};
+  for (auto* unit : m_playerUnits) {
+    arr.push_back(unit);
+  }
   m_Group->set("Units", arr);
+}
+
+void
+EntityManager::ActivatePlayerUnits()
+{
+  m_Group->set_visible(true);
+  m_Group->set_process_mode(PROCESS_MODE_INHERIT);
+  add_child(m_Group);
+
+  for (auto& unit : m_playerUnits) {
+    unit->set_visible(true);
+    unit->set_process_mode(PROCESS_MODE_INHERIT);
+    add_child(unit);
+  }
 }
 
 void

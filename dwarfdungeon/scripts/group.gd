@@ -2,7 +2,7 @@ class_name Group
 extends Node2D
 
 @export var Speed: float = 50.0
-@export var Units: Array[Unit] = []
+@export var Units: Array[CharacterBody2D]= []
 
 @onready var Camera: Camera2D = get_viewport().get_camera_2d()
 

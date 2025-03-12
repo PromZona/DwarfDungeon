@@ -29,7 +29,7 @@ UIManager::RegisterDependencies(Game* game)
 void
 UIManager::PlayButtonHandle()
 {
-  m_Game->LoadScene("res://scenes/Level_1.tscn");
+  m_Game->StartGame();
 }
 
 void

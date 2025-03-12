@@ -138,8 +138,12 @@ Game::_input(const godot::Ref<godot::InputEvent>& event)
 }
 
 void
-Game::StartGameButtonPressed()
+Game::StartGame()
 {
+  LoadScene("res://scenes/Level_1.tscn");
+
+  EntityManager->ActivatePlayerUnits();
+  SpawnManager->m_isActive = true;
 }
 
 } // namespace Behaviourlib

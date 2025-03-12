@@ -29,7 +29,7 @@ public:
 
   void LoadScene(godot::String);
 
-  void StartGameButtonPressed();
+  void StartGame();
 
   void _ready() override;
   void _physics_process(double delta) override;
