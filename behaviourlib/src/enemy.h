@@ -14,6 +14,7 @@ public:
   float MaxHealth = 100.0F;
   float CurrentHealth = MaxHealth;
   float AttackRadius = 32.0F + 8.0F;
+  bool IsDead = false;
 
   Enemy();
 

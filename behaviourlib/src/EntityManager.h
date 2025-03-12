@@ -46,6 +46,8 @@ private:
   godot::Vector<EntityId> m_ActiveEnemies;
   godot::Vector<godot::CharacterBody2D*> m_playerUnits;
 
+  godot::Vector<EntityId> m_AvailableEnemyIDs;
+
   godot::Node2D* m_Group;
 
   size_t m_enemiesCount;

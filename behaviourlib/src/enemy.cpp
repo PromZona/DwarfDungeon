@@ -47,6 +47,12 @@ Enemy::ReceiveDamage(float damage)
 {
   CurrentHealth -= damage;
   HealthBar->set_value(CurrentHealth);
+
+  if (CurrentHealth <= 0.0f) {
+    IsDead = true;
+    return;
+  }
+
   AnimPlayer->play("receive_damage");
 }
 

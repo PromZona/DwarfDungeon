@@ -1,6 +1,7 @@
 #include "EntityManager.h"
 #include "BehaviourManager.h"
 #include "enemy.h"
+#include <cassert>
 #include <godot_cpp/classes/character_body2d.hpp>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/global_constants.hpp>
@@ -22,6 +23,8 @@ EntityId
 EntityManager::AddEnemy()
 {
   EntityId id = m_enemiesCount;
+
+  assert(id <= m_MaxEnemyCount);
 
   Enemy* e = m_enemies[id];
   e->set_visible(true);
@@ -46,8 +49,17 @@ EntityManager::GetEnemy(EntityId id) const
 bool
 EntityManager::DeleteEnemy(EntityId id)
 {
-  godot::UtilityFunctions::print("Deleting entities not implemented yet");
-  return false;
+  Enemy* enemy = GetEnemy(id);
+  if (enemy == nullptr) {
+    return false;
+  }
+
+  enemy->set_visible(false);
+  enemy->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+
+  m_AvailableEnemyIDs.push_back(id);
+
+  return m_ActiveEnemies.erase(id);
 }
 
 godot::Vector<EntityId>&
@@ -146,6 +158,18 @@ EntityManager::ActivatePlayerUnits()
 void
 EntityManager::_process(double delta)
 {
+  godot::Vector<EntityId> freedIDs{};
+  for (EntityId unitId : m_ActiveEnemies) {
+    auto* enemy = m_enemies[unitId];
+    if (enemy->IsDead) {
+      freedIDs.push_back(unitId);
+    }
+  }
+
+  for (EntityId id : freedIDs) {
+    godot::UtilityFunctions::print("Freeing Dead Unit [", id, "]");
+    DeleteEnemy(id);
+  }
 }
 
 } // namespace game

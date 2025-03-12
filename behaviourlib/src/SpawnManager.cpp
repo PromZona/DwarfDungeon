@@ -63,6 +63,7 @@ SpawnManager::Spawn()
   EntityId id = m_EntityManger->AddEnemy();
   Enemy* enemy = m_EntityManger->GetEnemy(id);
   enemy->set_global_position(spawn_position);
+  enemy->IsDead = false;
 }
 
 } // namespace BehaviourLib
