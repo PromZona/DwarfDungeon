@@ -148,9 +148,9 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_u7vle"]
 _data = {
-"Attack": SubResource("Animation_5x7s2"),
-"RESET": SubResource("Animation_ds4sd"),
-"receive_damage": SubResource("Animation_1yc5u")
+&"Attack": SubResource("Animation_5x7s2"),
+&"RESET": SubResource("Animation_ds4sd"),
+&"receive_damage": SubResource("Animation_1yc5u")
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ix8yj"]
@@ -159,7 +159,7 @@ size = Vector2(40, 48)
 [sub_resource type="AtlasTexture" id="AtlasTexture_a73ym"]
 atlas = ExtResource("2_45tom")
 
-[node name="Enemy" type="Enemy"]
+[node name="Enemy" type="EnemyView"]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
@@ -184,7 +184,7 @@ tint_progress = Color(0.691585, 0.049943, 0, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_u7vle")
+&"": SubResource("AnimationLibrary_u7vle")
 }
 
 [node name="AttackAreaHandler" type="Node2D" parent="."]

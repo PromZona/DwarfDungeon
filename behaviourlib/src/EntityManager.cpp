@@ -1,6 +1,5 @@
 #include "EntityManager.h"
-#include "BehaviourManager.h"
-#include "enemy.h"
+#include <algorithm>
 #include <cassert>
 #include <godot_cpp/classes/character_body2d.hpp>
 #include <godot_cpp/classes/engine.hpp>
@@ -16,40 +15,39 @@
 namespace BehaviourLib {
 
 EntityManager::EntityManager() = default;
-
 EntityManager::~EntityManager() = default;
 
 EntityId
 EntityManager::AddEnemy()
 {
-  EntityId id = m_enemiesCount;
+  EntityId id = data->enemiesCount;
 
-  assert(id <= m_MaxEnemyCount);
+  assert(id <= data->MaxEnemyCount);
 
-  Enemy* e = m_enemies[id];
+  EnemyView* e = data->enemyViews[id];
   e->set_visible(true);
   e->set_process_mode(Node::ProcessMode::PROCESS_MODE_INHERIT);
   add_child(e);
 
-  m_ActiveEnemies.push_back(id);
+  data->activeEnemies.push_back(id);
 
-  m_enemiesCount++;
+  data->enemiesCount++;
   return id;
 }
 
-Enemy*
-EntityManager::GetEnemy(EntityId id) const
+EnemyView*
+EntityManager::GetEnemyView(EntityId id) const
 {
-  if (id > m_enemiesCount) {
+  if (id > data->enemiesCount) {
     return nullptr;
   }
-  return m_enemies[id];
+  return data->enemyViews[id];
 }
 
 bool
 EntityManager::DeleteEnemy(EntityId id)
 {
-  Enemy* enemy = GetEnemy(id);
+  EnemyView* enemy = GetEnemyView(id);
   if (enemy == nullptr) {
     return false;
   }
@@ -57,27 +55,16 @@ EntityManager::DeleteEnemy(EntityId id)
   enemy->set_visible(false);
   enemy->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
 
-  m_AvailableEnemyIDs.push_back(id);
+  data->availableIds.push(id);
 
-  return m_ActiveEnemies.erase(id);
-}
+  auto it =
+    std::find(data->activeEnemies.begin(), data->activeEnemies.end(), id);
+  if (it == data->activeEnemies.end()) {
+    return false;
+  }
 
-godot::Vector<EntityId>&
-EntityManager::GetActiveEnemies()
-{
-  return m_ActiveEnemies;
-}
-
-godot::Vector<Enemy*>&
-EntityManager::GetAllEnemies()
-{
-  return m_enemies;
-}
-
-godot::Vector<godot::CharacterBody2D*>&
-EntityManager::GetPlayerUnits()
-{
-  return m_playerUnits;
+  data->activeEnemies.erase(it);
+  return true;
 }
 
 void
@@ -88,67 +75,71 @@ EntityManager::_bind_methods()
 void
 EntityManager::_ready()
 {
-  if (godot::Engine::get_singleton()->is_editor_hint()) {
-    return;
-  }
+}
 
+void
+EntityManager::InitializeEntites()
+{
   // INITIALIZE ENEMIES
-  m_enemyScene = godot::ResourceLoader::get_singleton()->load(
-    "res://charachters/Enemy.tscn", "PackedScene");
-  if (!m_enemyScene.is_valid()) {
+  godot::Ref<godot::PackedScene> enemyScene =
+    godot::ResourceLoader::get_singleton()->load("res://charachters/Enemy.tscn",
+                                                 "PackedScene");
+  if (!enemyScene.is_valid()) {
     godot::UtilityFunctions::print("Error: Failed to find Enemy scene");
     return;
   }
 
-  for (int i = 0; i < m_MaxEnemyCount; i++) {
-    Enemy* enemy = Object::cast_to<Enemy>(m_enemyScene->instantiate());
+  for (size_t i = 0; i < data->MaxEnemyCount; i++) {
+    EnemyView* enemy = Object::cast_to<EnemyView>(enemyScene->instantiate());
     enemy->set_visible(false);
     enemy->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
-    m_enemies.push_back(enemy);
+    data->enemyViews[i] = enemy;
   }
 
   // INITIALIZE PLAYER UNITS
-  m_playerUnitScene = godot::ResourceLoader::get_singleton()->load(
-    "res://charachters/Unit.tscn", "PackedScene");
-  if (!m_playerUnitScene.is_valid()) {
+  godot::Ref<godot::PackedScene> playerUnitScene =
+    godot::ResourceLoader::get_singleton()->load("res://charachters/Unit.tscn",
+                                                 "PackedScene");
+  if (!playerUnitScene.is_valid()) {
     godot::UtilityFunctions::print("Error: Failed to find Enemy scene");
     return;
   }
 
-  for (int i = 0; i < 4; i++) {
+  for (size_t i = 0; i < 4; i++) {
     godot::CharacterBody2D* unit =
-      Object::cast_to<godot::CharacterBody2D>(m_playerUnitScene->instantiate());
+      Object::cast_to<godot::CharacterBody2D>(playerUnitScene->instantiate());
     unit->set_visible(false);
     unit->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
-    m_playerUnits.push_back(unit);
+    data->playerUnitViews[i] = unit;
   }
 
   // INITIALIZE GROUP
-  m_groupScene = godot::ResourceLoader::get_singleton()->load(
-    "res://charachters/Group.tscn", "PackedScene");
-  if (!m_groupScene.is_valid()) {
+  godot::Ref<godot::PackedScene> groupScene =
+    godot::ResourceLoader::get_singleton()->load("res://charachters/Group.tscn",
+                                                 "PackedScene");
+  if (!groupScene.is_valid()) {
     godot::UtilityFunctions::print("Error: Failed to find Enemy scene");
     return;
   }
-  m_Group = Object::cast_to<godot::Node2D>(m_groupScene->instantiate());
-  m_Group->set_visible(false);
-  m_Group->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+  data->groupView = Object::cast_to<godot::Node2D>(groupScene->instantiate());
+  data->groupView->set_visible(false);
+  data->groupView->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
 
   godot::TypedArray<godot::CharacterBody2D> arr{};
-  for (auto* unit : m_playerUnits) {
+  for (auto* unit : data->playerUnitViews) {
     arr.push_back(unit);
   }
-  m_Group->set("Units", arr);
+  data->groupView->set("Units", arr);
 }
 
 void
 EntityManager::ActivatePlayerUnits()
 {
-  m_Group->set_visible(true);
-  m_Group->set_process_mode(PROCESS_MODE_INHERIT);
-  add_child(m_Group);
+  data->groupView->set_visible(true);
+  data->groupView->set_process_mode(PROCESS_MODE_INHERIT);
+  add_child(data->groupView);
 
-  for (auto& unit : m_playerUnits) {
+  for (auto& unit : data->playerUnitViews) {
     unit->set_visible(true);
     unit->set_process_mode(PROCESS_MODE_INHERIT);
     add_child(unit);
@@ -158,9 +149,12 @@ EntityManager::ActivatePlayerUnits()
 void
 EntityManager::_process(double delta)
 {
+  if (godot::Engine::get_singleton()->is_editor_hint()) {
+    return;
+  }
   godot::Vector<EntityId> freedIDs{};
-  for (EntityId unitId : m_ActiveEnemies) {
-    auto* enemy = m_enemies[unitId];
+  for (EntityId unitId : data->activeEnemies) {
+    auto* enemy = data->enemyViews[unitId];
     if (enemy->IsDead) {
       freedIDs.push_back(unitId);
     }
@@ -172,4 +166,4 @@ EntityManager::_process(double delta)
   }
 }
 
-} // namespace game
+} // namespace BehaviourLib

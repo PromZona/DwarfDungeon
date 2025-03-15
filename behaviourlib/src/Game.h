@@ -2,14 +2,17 @@
 
 #include "BehaviourManager.h"
 #include "EntityManager.h"
+#include "GameData.h"
 #include "MovementManager.h"
 #include "SpawnManager.h"
 #include "UIManager.h"
+#include "godot_cpp/variant/array.hpp"
 #include <godot_cpp/classes/input_event.hpp>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 namespace BehaviourLib {
+
 class Game : public godot::Node
 {
   GDCLASS(Game, godot::Node)
@@ -34,6 +37,8 @@ public:
   void _ready() override;
   void _physics_process(double delta) override;
   void _input(const godot::Ref<godot::InputEvent>& event) override;
+
+  GameData Data;
 
   EntityManager* EntityManager;
   MovementManager* MovementManager;

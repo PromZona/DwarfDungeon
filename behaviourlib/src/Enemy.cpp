@@ -1,4 +1,4 @@
-#include "enemy.h"
+#include "Enemy.h"
 
 #include <godot_cpp/classes/animation_mixer.hpp>
 #include <godot_cpp/classes/animation_player.hpp>
@@ -10,7 +10,7 @@
 namespace BehaviourLib {
 using namespace godot;
 
-Enemy::Enemy()
+EnemyView::EnemyView()
 {
   if (Engine::get_singleton()->is_editor_hint()) {
     set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
@@ -18,16 +18,16 @@ Enemy::Enemy()
 }
 
 void
-Enemy::_bind_methods()
+EnemyView::_bind_methods()
 {
   ClassDB::bind_method(D_METHOD("ReceiveDamage", "damage"),
-                       &Enemy::ReceiveDamage);
+                       &EnemyView::ReceiveDamage);
 
-  ClassDB::bind_method(D_METHOD("ApplyDamage"), &Enemy::ApplyDamage);
+  ClassDB::bind_method(D_METHOD("ApplyDamage"), &EnemyView::ApplyDamage);
 }
 
 void
-Enemy::_ready()
+EnemyView::_ready()
 {
   if (Engine::get_singleton()->is_editor_hint()) {
     return;
@@ -43,7 +43,7 @@ Enemy::_ready()
 }
 
 void
-Enemy::ReceiveDamage(float damage)
+EnemyView::ReceiveDamage(float damage)
 {
   CurrentHealth -= damage;
   HealthBar->set_value(CurrentHealth);
@@ -57,7 +57,7 @@ Enemy::ReceiveDamage(float damage)
 }
 
 void
-Enemy::Attack(Vector2 direction)
+EnemyView::Attack(Vector2 direction)
 {
   AttackDirection = direction;
   AttackAreaHandler->look_at(direction);
@@ -65,7 +65,7 @@ Enemy::Attack(Vector2 direction)
 }
 
 void
-Enemy::ApplyDamage()
+EnemyView::ApplyDamage()
 {
   ShapeCast2D* attackArea =
     AttackAreaHandler->get_node<ShapeCast2D>("AttackArea");
@@ -82,7 +82,7 @@ Enemy::ApplyDamage()
 }
 
 bool
-Enemy::IsAttacking()
+EnemyView::IsAttacking()
 {
   return AnimPlayer->is_playing();
 }

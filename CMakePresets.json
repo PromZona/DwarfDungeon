@@ -5,8 +5,7 @@
 			"name": "common",
 			"binaryDir": "build",
 			"cacheVariables": {
-				"CMAKE_EXPORT_COMPILE_COMMANDS": "1",
-				"GODOT_CUSTOM_API_FILE": "${sourceDir}/extension_api.json"
+				"CMAKE_EXPORT_COMPILE_COMMANDS": "1"
 			}
 		},
 		{

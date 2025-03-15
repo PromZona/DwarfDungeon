@@ -16,13 +16,9 @@ public:
   void _ready() override;
   void _process(double delta) override;
 
-  void RegisterDependencies(EntityManager* manager);
   void Spawn();
 
-  int m_spawnCountTarget = 3;
-  int m_currentSpawnCount = 0;
-  EntityManager* m_EntityManger;
-  bool m_isActive = false;
+  Game* game;
 };
 
 } // namespace BehaviourLib

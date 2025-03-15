@@ -1,23 +1,24 @@
 #pragma once
+
 #include "BehaviourManager.h"
 #include "BehaviourNodes.h"
+#include "Enemy.h"
 #include "EntityManager.h"
 #include "Game.h"
 #include "MovementManager.h"
-#include "enemy.h"
-#include <algorithm>
 #include <godot_cpp/classes/character_body2d.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <algorithm>
+
 
 namespace BehaviourLib {
 
 static BehaviourLib::Status
 FindTarget(Game& game, UnitBlackBoard& blackboard)
 {
-  auto playerUnits = game.EntityManager->GetPlayerUnits();
+  auto& playerUnits = game.Data.Entities.playerUnitViews;
 
-  godot::CharacterBody2D* enemy =
-    game.EntityManager->GetEnemy(blackboard.unit_id);
+  EnemyView* enemy = game.EntityManager->GetEnemyView(blackboard.unit_id);
   godot::Vector2 enemy_pos = enemy->get_position();
 
   float lowestDistance = std::numeric_limits<float>::max();
@@ -46,23 +47,29 @@ FindTarget(Game& game, UnitBlackBoard& blackboard)
 static BehaviourLib::Status
 StartMove(Game& game, UnitBlackBoard& blackboard)
 {
-  game.MovementManager->m_MovingEntities.push_back(blackboard.unit_id);
+  game.Data.Entities.movingEnemies.push_back(blackboard.unit_id);
   return BehaviourLib::Status::SUCCESS;
 }
 
 static BehaviourLib::Status
 CheckIfArrived(Game& game, UnitBlackBoard& blackboard)
 {
-  auto playerUnits = game.EntityManager->GetPlayerUnits();
-  MovementManager* manager = game.MovementManager;
+  auto& playerUnits = game.Data.Entities.playerUnitViews;
+  auto& movingEnemies = game.Data.Entities.movingEnemies;
 
-  Enemy* enemy = game.EntityManager->GetEnemy(blackboard.unit_id);
+  EnemyView* enemy = game.EntityManager->GetEnemyView(blackboard.unit_id);
   godot::CharacterBody2D* targetUnit = playerUnits[blackboard.target_unit_id];
   float distance =
     enemy->get_position().distance_to(targetUnit->get_position());
 
   if (distance < enemy->AttackRadius) {
-    manager->m_MovingEntities.erase(blackboard.unit_id);
+      const auto it = std::find(movingEnemies.begin(), movingEnemies.end(), blackboard.unit_id);
+      if (it == movingEnemies.end())
+      {
+          godot::UtilityFunctions::print("CheckIfArrived: Failed to find unit in moving entities array");
+          return Status::FAILED;
+      }
+      movingEnemies.erase(it);
     return BehaviourLib::Status::SUCCESS;
   }
   return BehaviourLib::Status::RUNNING;
@@ -91,9 +98,9 @@ Pause(Game& game, UnitBlackBoard& blackboard)
 static BehaviourLib::Status
 Attack(Game& game, UnitBlackBoard& blackboard)
 {
-  auto playerUnits = game.EntityManager->GetPlayerUnits();
+  auto& playerUnits = game.Data.Entities.playerUnitViews;
 
-  Enemy* enemy = game.EntityManager->GetEnemy(blackboard.unit_id);
+  EnemyView* enemy = game.EntityManager->GetEnemyView(blackboard.unit_id);
   if (!blackboard.isAttacking) {
     godot::CharacterBody2D* targetUnit = playerUnits[blackboard.target_unit_id];
     godot::Vector2 targetPosition = targetUnit->get_position();

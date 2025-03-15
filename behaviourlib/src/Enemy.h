@@ -7,16 +7,16 @@
 
 namespace BehaviourLib {
 
-class Enemy : public godot::CharacterBody2D
+class EnemyView : public godot::CharacterBody2D
 {
-  GDCLASS(Enemy, godot::CharacterBody2D)
+  GDCLASS(EnemyView, godot::CharacterBody2D)
 public:
   float MaxHealth = 100.0F;
   float CurrentHealth = MaxHealth;
   float AttackRadius = 32.0F + 8.0F;
   bool IsDead = false;
 
-  Enemy();
+  EnemyView();
 
   void _ready() override;
 

@@ -22,6 +22,7 @@ var Target: Marker2D
 var GroupForceDirection: Vector2 = Vector2.ZERO 
 var GroupUnitsTooClose: Array[Area2D] = []
 var PersonalSpaceRadius: float
+var ClosestEnemy: CharacterBody2D
 
 func _ready() -> void:
 	var colshape2d: CollisionShape2D = PersonalSpaceArea.get_child(0)
@@ -30,6 +31,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	queue_redraw()
+	
 	return
 
 func _physics_process(delta: float) -> void:
@@ -92,7 +94,7 @@ func apply_damage() -> void:
 	AttackArea.force_shapecast_update()
 	var collisions: Array = AttackArea.collision_result # Thank you godot for static typing
 	for col in collisions:
-		var enemy: Enemy = col.collider as Enemy
+		var enemy: EnemyView = col.collider as EnemyView
 		if enemy:
 			enemy.ReceiveDamage(Damage)
 	return

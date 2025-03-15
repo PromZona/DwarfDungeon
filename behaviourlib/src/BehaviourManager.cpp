@@ -3,6 +3,7 @@
 #include "BehaviourNodes.h"
 #include "EntityManager.h"
 #include "Game.h"
+#include "GameData.h"
 
 #include <cstdint>
 #include <cstdlib>
@@ -30,33 +31,11 @@
 namespace BehaviourLib {
 using namespace godot;
 
-void
-BehaviourManager::_bind_methods()
-{
-}
-
 BehaviourManager::BehaviourManager()
-  : m_group(nullptr)
-  , m_tree()
 {
-  if (Engine::get_singleton()->is_editor_hint()) {
-    set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
-    return;
-  }
+
   UtilityFunctions::print("Behaviour Manager Constructor");
   RegisterActionTable();
-}
-
-void
-BehaviourManager::_ready()
-{
-  if (Engine::get_singleton()->is_editor_hint()) {
-    return;
-  }
-  UtilityFunctions::print("Behaviour Manager Constructor");
-  Node* parent = get_parent();
-
-  // m_group = parent->find_child("Group");
 }
 
 void
@@ -70,24 +49,16 @@ BehaviourManager::RegisterActionTable()
 }
 
 void
-BehaviourManager::RegisterDependencies(Game* game, EntityManager* entityManager)
-{
-  m_Game = game;
-  m_entityManager = entityManager;
-}
-
-void
 BehaviourManager::PreGameStart()
 {
-  godot::Vector<Enemy*>& enemies = m_entityManager->GetAllEnemies();
-  for (uint32_t i = 0; i < enemies.size(); i++) {
+  size_t enemiesCount = EntitiesData::MaxEnemyCount;
+  for (size_t i = 0; i < enemiesCount; i++) {
     UnitBlackBoard board{ .timestamp = {},
                           .unit_id = i,
                           .target_unit_id = NULL_ENTITY,
                           .isWaiting = false,
                           .isAttacking = false };
-    m_boards.push_back(board);
-    m_executionContext.emplace_back();
+    game->Data.Ai.boards[i] = board;
   }
 
   LoadAiTree(std::string("res://assets/ai/enemy_ai.txt"));
@@ -108,15 +79,16 @@ SplitString(const std::string& s, char sep = ',')
 BehaviourLib::Status
 BehaviourManager::ExecuteNode(const EntityId entityId)
 {
-  ExecutionContext& context = m_executionContext[entityId];
+  AiData& ai = game->Data.Ai;
+  ExecutionContext& context = ai.executionContext[entityId];
 
   if (context.stack.empty()) {
-    context.stack.push_back({ m_tree.root, 0, Status::FAILED });
+    context.stack.push_back({ ai.tree.root, 0, Status::FAILED });
   }
 
   while (!context.stack.empty()) {
     ExecutionFrame& frame = context.stack.back();
-    BehaviourLib::Node& node = m_tree.nodes[frame.nodeId];
+    BehaviourLib::Node& node = ai.tree.nodes[frame.nodeId];
 
     switch (node.type) {
       case BehaviourLib::NodeType::Sequence: {
@@ -141,7 +113,7 @@ BehaviourManager::ExecuteNode(const EntityId entityId)
         break;
       }
       case BehaviourLib::NodeType::Action: {
-        BehaviourLib::Status status = node.Execute(*m_Game, m_boards[entityId]);
+        BehaviourLib::Status status = node.Execute(*game, ai.boards[entityId]);
         if (status == BehaviourLib::Status::RUNNING) {
           return status;
         }
@@ -206,15 +178,15 @@ BehaviourManager::LoadAiTree(const std::string& filename)
     nodesCount++;
   }
 
-  BehaviourLib::Tree tree{};
+  BehaviourLib::Tree& tree = game->Data.Ai.tree;
+
   tree.nodesCount = nodesCount;
   tree.root = rootId;
   tree.nodes = new BehaviourLib::Node[nodesCount];
-  m_tree = tree;
 
   for (BehaviourLib::NodeId i = 0; i < nodesCount; i++) {
     const TempNodeData& tempData = nodes[i];
-    BehaviourLib::Node* node = &m_tree.nodes[i];
+    BehaviourLib::Node* node = &tree.nodes[i];
 
     node->id = i;
 
@@ -244,9 +216,9 @@ BehaviourManager::LoadAiTree(const std::string& filename)
 }
 
 void
-BehaviourManager::_process(double delta)
+BehaviourManager::Update(double delta)
 {
-  auto enemies = m_entityManager->GetActiveEnemies();
+  auto& enemies = game->Data.Entities.activeEnemies;
   for (EntityId id : enemies) {
     BehaviourLib::Status status = ExecuteNode(id);
 
@@ -255,26 +227,4 @@ BehaviourManager::_process(double delta)
   }
 }
 
-void
-BehaviourManager::_physics_process(double delta)
-{
-  return;
-  /*
-  auto enemies = m_entityManager->GetEnemies();
-  for (EntityId id : m_movingEntities) {
-    UnitBlackBoard& board = m_boards[id];
-
-    if (board.target_unit_id == NULL_ENTITY) {
-      continue;
-    }
-
-    CharacterBody2D* enemy = enemies[id];
-    const CharacterBody2D* target_unit = m_units[board.target_unit_id];
-    const Vector2 direction =
-      enemy->get_position().direction_to(target_unit->get_position());
-    enemy->set_velocity(direction * 10.0f);
-    enemy->move_and_slide();
-  }
-  */
-}
 } // namespace BehaviourLib

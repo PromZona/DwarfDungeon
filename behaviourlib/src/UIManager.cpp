@@ -20,16 +20,12 @@ UIManager::_bind_methods()
   godot::ClassDB::bind_method(godot::D_METHOD("ExitButtonHandle"),
                               &UIManager::ExitButtonHandle);
 }
-void
-UIManager::RegisterDependencies(Game* game)
-{
-  m_Game = game;
-}
+
 
 void
 UIManager::PlayButtonHandle()
 {
-  m_Game->StartGame();
+  game->StartGame();
 }
 
 void
@@ -42,9 +38,9 @@ void
 UIManager::ExitButtonHandle()
 {
   godot::UtilityFunctions::print("UIManager: Exit Button Handle");
-  m_Game->get_parent()->propagate_notification(
+  game->get_parent()->propagate_notification(
     godot::Node::NOTIFICATION_WM_CLOSE_REQUEST);
-  m_Game->get_tree()->quit(0);
+  game->get_tree()->quit(0);
 }
 
 void

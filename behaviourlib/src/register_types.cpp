@@ -5,7 +5,7 @@
 #include "Game.h"
 #include "SpawnManager.h"
 #include "UIManager.h"
-#include "enemy.h"
+#include "Enemy.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -24,9 +24,8 @@ initialize_example_module(ModuleInitializationLevel p_level)
   GDREGISTER_CLASS(BehaviourLib::Game);
   GDREGISTER_CLASS(BehaviourLib::SpawnManager);
   GDREGISTER_CLASS(BehaviourLib::EntityManager);
-  GDREGISTER_CLASS(BehaviourLib::BehaviourManager);
   GDREGISTER_CLASS(BehaviourLib::UIManager);
-  GDREGISTER_CLASS(BehaviourLib::Enemy);
+  GDREGISTER_CLASS(BehaviourLib::EnemyView);
 }
 
 void

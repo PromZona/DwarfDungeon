@@ -33,9 +33,6 @@ func _input(event: InputEvent) -> void:
 	if CurrentState == GroupState.GroupIdle && is_moving:
 		CurrentState = GroupState.GroupMoving
 
-	if event.is_action_pressed("attack"):
-		for unit: Unit in Units:
-			unit.Attack(Camera.get_global_mouse_position())
 	return
 
 func _process(delta: float) -> void:

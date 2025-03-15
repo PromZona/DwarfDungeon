@@ -4,27 +4,22 @@
 namespace BehaviourLib {
 
 void
-MovementManager::RegisterDependencies(EntityManager* entityManager,
-                                      BehaviourManager* behaviourManager)
-{
-  m_EntityManager = entityManager;
-  m_BehaviourManager = behaviourManager;
-}
-
-void
 MovementManager::Update()
 {
-  const auto& playerUnits = m_EntityManager->GetPlayerUnits();
-  const auto& brainBoards = m_BehaviourManager->m_boards;
+  const auto& playerUnits = gameData->Entities.playerUnitViews;
+  const auto& brainBoards = gameData->Ai.boards;
+  const auto& movingEnemies = gameData->Entities.movingEnemies;
+  const auto& enemyViews = gameData->Entities.enemyViews;
 
-  for (EntityId id : m_MovingEntities) {
+
+  for (EntityId id : movingEnemies) {
     const UnitBlackBoard& board = brainBoards[id];
 
     if (board.target_unit_id == NULL_ENTITY) {
       continue;
     }
 
-    godot::CharacterBody2D* enemy = m_EntityManager->GetEnemy(id);
+    EnemyView* enemy = enemyViews[id];
     const godot::CharacterBody2D* target_unit =
       playerUnits[board.target_unit_id];
     const godot::Vector2 direction =

@@ -15,7 +15,6 @@ protected:
 public:
   UIManager() = default;
 
-  void RegisterDependencies(Game* game);
   void UpdateUiBindings(const godot::Node* rootStaticScene);
 
   // Main Menu
@@ -23,8 +22,7 @@ public:
   void OptionsButtonHandle();
   void ExitButtonHandle();
 
-private:
-  Game* m_Game;
+  Game* game;
 };
 
 } // namespace BehaviourLib

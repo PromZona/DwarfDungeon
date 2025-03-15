@@ -1,6 +1,7 @@
 #include "SpawnManager.h"
+#include "Enemy.h"
 #include "EntityManager.h"
-#include "enemy.h"
+#include "Game.h"
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
@@ -26,14 +27,14 @@ double deltaAccumulated = 0.0f;
 void
 SpawnManager::_process(double delta)
 {
-  if (!m_isActive) {
-    return;
-  }
-
   if (godot::Engine::get_singleton()->is_editor_hint()) {
     return;
   }
-  if (m_currentSpawnCount >= m_spawnCountTarget) {
+
+  if (!game->Data.Spawn.isActive) {
+    return;
+  }
+  if (game->Data.Spawn.currentSpawnCount >= game->Data.Spawn.spawnCountTarget) {
     return;
   }
   if (deltaAccumulated < 3.0f) {
@@ -42,14 +43,8 @@ SpawnManager::_process(double delta)
   }
 
   deltaAccumulated = 0.0f;
-  m_currentSpawnCount++;
+  game->Data.Spawn.currentSpawnCount++;
   Spawn();
-}
-
-void
-SpawnManager::RegisterDependencies(EntityManager* manager)
-{
-  m_EntityManger = manager;
 }
 
 void
@@ -60,8 +55,8 @@ SpawnManager::Spawn()
   // ask entity manager to create new unit
   godot::Vector2 spawn_position = { 10.0f, 10.0f };
 
-  EntityId id = m_EntityManger->AddEnemy();
-  Enemy* enemy = m_EntityManger->GetEnemy(id);
+  EntityId id = game->EntityManager->AddEnemy();
+  EnemyView* enemy = game->EntityManager->GetEnemyView(id);
   enemy->set_global_position(spawn_position);
   enemy->IsDead = false;
 }

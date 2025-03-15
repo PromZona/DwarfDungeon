@@ -3,6 +3,7 @@
 #include "EntityManager.h"
 #include "MovementManager.h"
 #include "SpawnManager.h"
+#include "godot_cpp/core/memory.hpp"
 
 #include <cstdint>
 #include <godot_cpp/classes/engine.hpp>
@@ -27,11 +28,10 @@ Game::RegisterManagers()
   godot::UtilityFunctions::print("Game: Register Managers");
   this->EntityManager =
     (BehaviourLib::EntityManager*)find_child("EntityManager", false);
-  this->BehaviourManager =
-    (BehaviourLib::BehaviourManager*)find_child("BehaviourManager", false);
   this->SpawnManager =
     (BehaviourLib::SpawnManager*)find_child("SpawnManager", false);
   this->MovementManager = memnew(class MovementManager);
+  this->BehaviourManager = memnew(class BehaviourManager);
   this->UIManager = memnew(class UIManager);
 }
 
@@ -39,16 +39,18 @@ void
 Game::PostRegisterManagers()
 {
   godot::UtilityFunctions::print("Game: Post Register Managers");
-  MovementManager->RegisterDependencies(EntityManager, BehaviourManager);
-  BehaviourManager->RegisterDependencies(this, EntityManager);
-  SpawnManager->RegisterDependencies(EntityManager);
-  UIManager->RegisterDependencies(this);
+  EntityManager->data = &Data.Entities;
+  MovementManager->gameData = &Data;
+  BehaviourManager->game = this;
+  SpawnManager->game = this;
+  UIManager->game = this;
 }
 
 void
 Game::PreGameStart()
 {
   godot::UtilityFunctions::print("Game: Pre Game Start");
+  EntityManager->InitializeEntites();
   BehaviourManager->PreGameStart();
 }
 
@@ -118,6 +120,7 @@ Game::_physics_process(double delta)
   }
 
   MovementManager->Update();
+  BehaviourManager->Update(delta);
 }
 
 void
@@ -143,7 +146,7 @@ Game::StartGame()
   LoadScene("res://scenes/Level_1.tscn");
 
   EntityManager->ActivatePlayerUnits();
-  SpawnManager->m_isActive = true;
+  Data.Spawn.isActive = true;
 }
 
 } // namespace Behaviourlib
