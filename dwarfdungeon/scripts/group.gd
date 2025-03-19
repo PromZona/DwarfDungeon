@@ -18,8 +18,8 @@ func _ready() -> void:
 	Positions.append($Position4)
 	
 	var i: int = 0
-	for unit: Unit in Units:
-		unit.SetTarget(Positions[i])
+	for unit: PlayerUnitView in Units:
+		unit.set_target(Positions[i])
 		i += 1
 	return
 
@@ -67,8 +67,8 @@ func move(_delta: float) -> void:
 
 	direction = direction.normalized()
 	var unit_positions: Array[Vector2] = []
-	for unit: Unit in Units:
-		unit.SetGroupForceDirection(direction)
+	for unit: PlayerUnitView in Units:
+		unit.set_group_direction(direction)
 		unit_positions.append(unit.global_position)
 	var target_position:Vector2 = group_center(unit_positions)
 	position = target_position

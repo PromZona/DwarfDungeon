@@ -1,7 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://chym3vdoe3mpi"]
 
 [ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="1_8gimr"]
-[ext_resource type="Script" uid="uid://18ca16bubn27" path="res://scripts/Unit.gd" id="1_lorbv"]
 [ext_resource type="Texture2D" uid="uid://chnoj122dqx4b" path="res://assets/fx/swrod_fx.png" id="3_253o4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qmh3a"]
@@ -15,6 +14,9 @@ size = Vector2(40, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wih0m"]
 atlas = ExtResource("3_253o4")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wn5sr"]
+radius = 120.0
 
 [sub_resource type="Animation" id="Animation_tu0db"]
 resource_name = "Attack"
@@ -91,15 +93,8 @@ _data = {
 &"RESET": SubResource("Animation_ciafn")
 }
 
-[node name="Unit" type="CharacterBody2D"]
+[node name="Unit" type="PlayerUnitView"]
 collision_layer = 2
-script = ExtResource("1_lorbv")
-Damage = 5.0
-Speed = 60
-FormationCloseEnoughDistance = 15.0
-FormationMaxSpeedDistance = 150.0
-FormationMinSpeedCoefficient = 0.3
-FormationMaxSpeedCoefficient = 1.2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 z_index = 1
@@ -133,6 +128,12 @@ rotation = 0.785398
 scale = Vector2(3, 3)
 texture = SubResource("AtlasTexture_wih0m")
 hframes = 6
+
+[node name="AttackRadius" type="Area2D" parent="AttackAreaHandler"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackAreaHandler/AttackRadius"]
+shape = SubResource("CircleShape2D_wn5sr")
+debug_color = Color(0.642807, 0.522645, 0.0907487, 0.0509804)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

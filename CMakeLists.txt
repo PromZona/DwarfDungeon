@@ -13,6 +13,7 @@ set (SOURCES
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/Game.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/MovementManager.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/UIManager.cpp"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/PlayerUnitView.cpp"
 )
 
 

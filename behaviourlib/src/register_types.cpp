@@ -3,6 +3,7 @@
 #include "BehaviourManager.h"
 #include "EntityManager.h"
 #include "Game.h"
+#include "PlayerUnitView.h"
 #include "SpawnManager.h"
 #include "UIManager.h"
 #include "Enemy.h"
@@ -26,6 +27,7 @@ initialize_example_module(ModuleInitializationLevel p_level)
   GDREGISTER_CLASS(BehaviourLib::EntityManager);
   GDREGISTER_CLASS(BehaviourLib::UIManager);
   GDREGISTER_CLASS(BehaviourLib::EnemyView);
+  GDREGISTER_CLASS(BehaviourLib::PlayerUnitView);
 }
 
 void

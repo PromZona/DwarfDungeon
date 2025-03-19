@@ -29,7 +29,7 @@ struct EntitiesData
   std::vector<EntityId> movingEnemies;
 
   std::queue<EntityId> availableIds;
-  size_t enemiesCount;
+  size_t enemiesCount = 0;
 };
 
 struct UnitBlackBoard

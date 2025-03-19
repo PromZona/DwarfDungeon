@@ -1,4 +1,5 @@
 #include "EntityManager.h"
+#include "GameData.h"
 #include <algorithm>
 #include <cassert>
 #include <godot_cpp/classes/character_body2d.hpp>
@@ -22,6 +23,7 @@ EntityManager::AddEnemy()
 {
   EntityId id = data->enemiesCount;
 
+  godot::UtilityFunctions::print(id, " ",  BehaviourLib::EntitiesData::MaxEnemyCount);
   assert(id <= data->MaxEnemyCount);
 
   EnemyView* e = data->enemyViews[id];
