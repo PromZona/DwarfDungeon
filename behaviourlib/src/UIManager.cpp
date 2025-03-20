@@ -1,5 +1,9 @@
 #include "UIManager.h"
 #include "Game.h"
+#include "PerformanceLogger.h"
+#include "godot_cpp/classes/canvas_item.hpp"
+#include "godot_cpp/classes/engine_debugger.hpp"
+#include "godot_cpp/classes/label.hpp"
 #include <godot_cpp/classes/button.hpp>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/node.hpp>
@@ -20,7 +24,6 @@ UIManager::_bind_methods()
   godot::ClassDB::bind_method(godot::D_METHOD("ExitButtonHandle"),
                               &UIManager::ExitButtonHandle);
 }
-
 
 void
 UIManager::PlayButtonHandle()
@@ -65,4 +68,12 @@ UIManager::UpdateUiBindings(const godot::Node* rootStaticScene)
   }
 }
 
+void
+UIManager::DrawDebugInfo()
+{
+  godot::Label* debugTextLabel =
+    game->get_node<godot::Label>("Camera2D/Debug/Label");
+
+  debugTextLabel->set_text(PerformanceLogger.GetGodotString());
+}
 } // namespace BehaviourLib

@@ -3,6 +3,7 @@
 #include "godot_cpp/classes/animation_player.hpp"
 #include "godot_cpp/classes/area2d.hpp"
 #include "godot_cpp/classes/marker2d.hpp"
+#include "godot_cpp/classes/random_number_generator.hpp"
 #include "godot_cpp/classes/shape_cast2d.hpp"
 #include <godot_cpp/classes/character_body2d.hpp>
 

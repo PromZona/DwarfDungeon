@@ -2,6 +2,7 @@
 #include "BehaviourManager.h"
 #include "EntityManager.h"
 #include "MovementManager.h"
+#include "PerformanceLogger.h"
 #include "SpawnManager.h"
 #include "godot_cpp/core/memory.hpp"
 
@@ -52,6 +53,7 @@ Game::PreGameStart()
   godot::UtilityFunctions::print("Game: Pre Game Start");
   EntityManager->InitializeEntites();
   BehaviourManager->PreGameStart();
+  SpawnManager->InitializeSpawnPoints();
 }
 
 void
@@ -104,6 +106,9 @@ Game::_ready()
   }
 
   godot::UtilityFunctions::print("Game: Initialization Start");
+
+  Data.Rand.instantiate();
+
   RegisterManagers();
   PostRegisterManagers();
   PreGameStart();
@@ -113,14 +118,28 @@ Game::_ready()
 }
 
 void
-Game::_physics_process(double delta)
+Game::_process(double delta)
 {
   if (godot::Engine::get_singleton()->is_editor_hint()) {
     return;
   }
 
-  MovementManager->Update();
+  // PerformanceLogger.Print();
+  UIManager->DrawDebugInfo();
+  PerformanceLogger.Clear();
+
+  PERF("Game _process")
+
   BehaviourManager->Update(delta);
+}
+
+void
+Game::_physics_process(double delta)
+{
+  if (godot::Engine::get_singleton()->is_editor_hint()) {
+    return;
+  }
+  MovementManager->Update();
 }
 
 void

@@ -23,7 +23,8 @@ EntityManager::AddEnemy()
 {
   EntityId id = data->enemiesCount;
 
-  godot::UtilityFunctions::print(id, " ",  BehaviourLib::EntitiesData::MaxEnemyCount);
+  godot::UtilityFunctions::print(
+    id, " ", BehaviourLib::EntitiesData::MaxEnemyCount);
   assert(id <= data->MaxEnemyCount);
 
   EnemyView* e = data->enemyViews[id];
@@ -56,16 +57,19 @@ EntityManager::DeleteEnemy(EntityId id)
 
   enemy->set_visible(false);
   enemy->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
-
   data->availableIds.push(id);
 
-  auto it =
-    std::find(data->activeEnemies.begin(), data->activeEnemies.end(), id);
+  auto it = std::ranges::find(data->activeEnemies, id);
   if (it == data->activeEnemies.end()) {
     return false;
   }
-
   data->activeEnemies.erase(it);
+
+  auto movingItr = std::ranges::find(data->movingEnemies, id);
+  if (movingItr == data->movingEnemies.end()) {
+    return false;
+  }
+  data->movingEnemies.erase(movingItr);
   return true;
 }
 

@@ -35,6 +35,7 @@ public:
   void StartGame();
 
   void _ready() override;
+  void _process(double delta) override;
   void _physics_process(double delta) override;
   void _input(const godot::Ref<godot::InputEvent>& event) override;
 

@@ -3,6 +3,9 @@
 #include "BehaviourNodes.h"
 #include "Enemy.h"
 #include "godot_cpp/classes/character_body2d.hpp"
+#include "godot_cpp/classes/collision_shape2d.hpp"
+#include "godot_cpp/classes/random_number_generator.hpp"
+#include "godot_cpp/classes/ref_counted.hpp"
 #include <queue>
 
 namespace BehaviourLib {
@@ -62,9 +65,10 @@ struct AiData
 
 struct SpawnData
 {
-    int spawnCountTarget = 3;
-    int currentSpawnCount = 0;
-    bool isActive = false;
+  int spawnCountTarget = 3;
+  int currentSpawnCount = 0;
+  bool isActive = false;
+  std::array<godot::CollisionShape2D*, 12> spawnAreas;
 };
 
 struct GameData
@@ -72,6 +76,8 @@ struct GameData
   EntitiesData Entities;
   AiData Ai;
   SpawnData Spawn;
+
+  godot::Ref<godot::RandomNumberGenerator> Rand;
 };
 
 } // namepsace BehaviourLib

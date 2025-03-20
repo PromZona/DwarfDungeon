@@ -8,23 +8,43 @@ size = Vector2(119, 121)
 [node name="Level1" type="Node2D"]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
-position = Vector2(-186.5, -93.5)
+position = Vector2(344, -27)
+scale = Vector2(0.315787, 3.36304)
 
 [node name="Icon2" type="Sprite2D" parent="StaticBody2D"]
-position = Vector2(370.5, 157.5)
 texture = ExtResource("1_2qy76")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(370.5, 157.5)
 shape = SubResource("RectangleShape2D_0b2h1")
 
-[node name="obstacle" type="StaticBody2D" parent="."]
-position = Vector2(-186.5, -93.5)
+[node name="StaticBody2D2" type="StaticBody2D" parent="."]
+position = Vector2(-308, -17)
+scale = Vector2(0.315787, 3.36304)
 
-[node name="Icon" type="Sprite2D" parent="obstacle"]
-position = Vector2(-0.5, 0.5)
+[node name="Icon2" type="Sprite2D" parent="StaticBody2D2"]
 texture = ExtResource("1_2qy76")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="obstacle"]
-position = Vector2(-1.5, 2.5)
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D2"]
+shape = SubResource("RectangleShape2D_0b2h1")
+
+[node name="StaticBody2D3" type="StaticBody2D" parent="."]
+position = Vector2(19, -247)
+rotation = 1.57079
+scale = Vector2(0.315787, 5.28304)
+
+[node name="Icon2" type="Sprite2D" parent="StaticBody2D3"]
+texture = ExtResource("1_2qy76")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D3"]
+shape = SubResource("RectangleShape2D_0b2h1")
+
+[node name="StaticBody2D4" type="StaticBody2D" parent="."]
+position = Vector2(14, 190)
+rotation = 1.57079
+scale = Vector2(0.315787, 5.28304)
+
+[node name="Icon2" type="Sprite2D" parent="StaticBody2D4"]
+texture = ExtResource("1_2qy76")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D4"]
 shape = SubResource("RectangleShape2D_0b2h1")

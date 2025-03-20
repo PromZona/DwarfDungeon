@@ -16,6 +16,7 @@ public:
   void _ready() override;
   void _process(double delta) override;
 
+  void InitializeSpawnPoints();
   void Spawn();
 
   Game* game;

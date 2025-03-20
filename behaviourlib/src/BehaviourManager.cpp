@@ -4,6 +4,7 @@
 #include "EntityManager.h"
 #include "Game.h"
 #include "GameData.h"
+#include "PerformanceLogger.h"
 
 #include <cstdint>
 #include <cstdlib>
@@ -218,6 +219,7 @@ BehaviourManager::LoadAiTree(const std::string& filename)
 void
 BehaviourManager::Update(double delta)
 {
+  PERF("BehaviourManager Update")
   auto& enemies = game->Data.Entities.activeEnemies;
   for (EntityId id : enemies) {
     BehaviourLib::Status status = ExecuteNode(id);

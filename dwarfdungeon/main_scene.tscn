@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://c2rdv57n283at"]
+[gd_scene load_steps=5 format=3 uid="uid://c2rdv57n283at"]
 
 [ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="2_7i657"]
 [ext_resource type="Script" uid="uid://cjupsglqoxjq7" path="res://scripts/camera.gd" id="2_cy2b8"]
@@ -6,11 +6,29 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cogig"]
 size = Vector2(119, 121)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_2c62f"]
+radius = 64.0
+
 [node name="main_scene" type="Game"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(-10.5, -38)
 script = ExtResource("2_cy2b8")
+
+[node name="Debug" type="Control" parent="Camera2D"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -319.0
+offset_top = -179.0
+offset_right = 320.0
+offset_bottom = 176.0
+size_flags_horizontal = 0
+
+[node name="Label" type="Label" parent="Camera2D/Debug"]
+layout_mode = 0
+offset_right = 148.0
+offset_bottom = 359.0
+theme_override_font_sizes/font_size = 8
 
 [node name="StaticEnvironment" type="Node" parent="."]
 
@@ -39,3 +57,13 @@ shape = SubResource("RectangleShape2D_cogig")
 [node name="EntityManager" type="EntityManager" parent="."]
 
 [node name="SpawnManager" type="SpawnManager" parent="."]
+
+[node name="SpawnArea1" type="CollisionShape2D" parent="SpawnManager"]
+position = Vector2(-213, 44)
+shape = SubResource("CircleShape2D_2c62f")
+disabled = true
+
+[node name="SpawnArea2" type="CollisionShape2D" parent="SpawnManager"]
+position = Vector2(242, -158)
+shape = SubResource("CircleShape2D_2c62f")
+disabled = true

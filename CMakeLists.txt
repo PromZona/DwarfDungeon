@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.24)
 
 project(DwarfDungeon)
 
@@ -6,6 +6,7 @@ add_subdirectory(godot-cpp)
 
 set (SOURCES
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/register_types.cpp"
+	"${CMAKE_SOURCE_DIR}/behaviourlib/src/PerformanceLogger.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/SpawnManager.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/EntityManager.cpp"
 	"${CMAKE_SOURCE_DIR}/behaviourlib/src/Enemy.cpp"

@@ -32,7 +32,10 @@ func _input(event: InputEvent) -> void:
 
 	if CurrentState == GroupState.GroupIdle && is_moving:
 		CurrentState = GroupState.GroupMoving
-
+	
+	if event.is_action_pressed("attack"):
+		return
+		# GDExtensionManager.reload_extension(GDExtensionManager.get_loaded_extensions()[0])
 	return
 
 func _process(delta: float) -> void:

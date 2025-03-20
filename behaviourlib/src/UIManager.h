@@ -22,6 +22,8 @@ public:
   void OptionsButtonHandle();
   void ExitButtonHandle();
 
+  void DrawDebugInfo();
+
   Game* game;
 };
 
