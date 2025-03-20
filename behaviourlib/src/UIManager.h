@@ -24,6 +24,8 @@ public:
 
   void DrawDebugInfo();
 
+  void Update();
+
   Game* game;
 };
 

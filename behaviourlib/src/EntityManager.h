@@ -11,6 +11,8 @@
 
 namespace BehaviourLib {
 
+class Game;
+
 class EntityManager : public godot::Node
 {
   GDCLASS(EntityManager, godot::Node)
@@ -31,7 +33,7 @@ public:
   void _ready() override;
   void _process(double delta) override;
 
-  EntitiesData* data;
+  Game* game;
 };
 
 } // namespace BehaviourLib

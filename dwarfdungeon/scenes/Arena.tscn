@@ -1,18 +1,47 @@
 [gd_scene load_steps=3 format=3 uid="uid://ui7cfok4qjy8"]
 
-[ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="1_2qy76"]
+[ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="1_5ftpa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0b2h1"]
 size = Vector2(119, 121)
 
-[node name="Level1" type="Node2D"]
+[node name="Arena" type="Node2D"]
+
+[node name="ArenaUI" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="ArenaUI"]
+layout_mode = 3
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ArenaUI/Control"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -144.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="EnemiesKilledLabel" type="Label" parent="ArenaUI/Control/HBoxContainer"]
+layout_mode = 2
+text = "Enemies Left:"
+
+[node name="EnemiesKilledCount" type="Label" parent="ArenaUI/Control/HBoxContainer"]
+layout_mode = 2
+text = "0"
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 position = Vector2(344, -27)
 scale = Vector2(0.315787, 3.36304)
 
 [node name="Icon2" type="Sprite2D" parent="StaticBody2D"]
-texture = ExtResource("1_2qy76")
+texture = ExtResource("1_5ftpa")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
 shape = SubResource("RectangleShape2D_0b2h1")
@@ -22,7 +51,7 @@ position = Vector2(-308, -17)
 scale = Vector2(0.315787, 3.36304)
 
 [node name="Icon2" type="Sprite2D" parent="StaticBody2D2"]
-texture = ExtResource("1_2qy76")
+texture = ExtResource("1_5ftpa")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D2"]
 shape = SubResource("RectangleShape2D_0b2h1")
@@ -33,7 +62,7 @@ rotation = 1.57079
 scale = Vector2(0.315787, 5.28304)
 
 [node name="Icon2" type="Sprite2D" parent="StaticBody2D3"]
-texture = ExtResource("1_2qy76")
+texture = ExtResource("1_5ftpa")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D3"]
 shape = SubResource("RectangleShape2D_0b2h1")
@@ -44,7 +73,7 @@ rotation = 1.57079
 scale = Vector2(0.315787, 5.28304)
 
 [node name="Icon2" type="Sprite2D" parent="StaticBody2D4"]
-texture = ExtResource("1_2qy76")
+texture = ExtResource("1_5ftpa")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D4"]
 shape = SubResource("RectangleShape2D_0b2h1")

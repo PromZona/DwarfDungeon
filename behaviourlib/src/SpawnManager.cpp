@@ -29,8 +29,6 @@ SpawnManager::_ready()
   }
 }
 
-double deltaAccumulated = 0.0f;
-
 void
 SpawnManager::_process(double delta)
 {
@@ -39,19 +37,20 @@ SpawnManager::_process(double delta)
   }
   PERF("SpawnManager _process")
 
-  if (!game->Data.Spawn.isActive) {
+  SpawnData& spawnData = game->Data.Spawn;
+  if (!spawnData.isActive) {
     return;
   }
-  if (game->Data.Spawn.currentSpawnCount >= game->Data.Spawn.spawnCountTarget) {
+  if (spawnData.currentSpawnCount > game->Data.Arena.enemiesKillGoal) {
     return;
   }
-  if (deltaAccumulated < 3.0f) {
-    deltaAccumulated += delta;
+  if (spawnData.deltaTimeSpawn < 3.0f) {
+    spawnData.deltaTimeSpawn += delta;
     return;
   }
 
-  deltaAccumulated = 0.0f;
-  game->Data.Spawn.currentSpawnCount++;
+  spawnData.deltaTimeSpawn = 0.0f;
+  spawnData.currentSpawnCount++;
   Spawn();
 }
 

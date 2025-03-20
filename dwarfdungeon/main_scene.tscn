@@ -16,6 +16,7 @@ position = Vector2(-10.5, -38)
 script = ExtResource("2_cy2b8")
 
 [node name="Debug" type="Control" parent="Camera2D"]
+z_index = 1000
 layout_mode = 3
 anchors_preset = 0
 offset_left = -319.0

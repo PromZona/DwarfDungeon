@@ -1,6 +1,6 @@
 #include "EntityManager.h"
+#include "Game.h"
 #include "GameData.h"
-#include <algorithm>
 #include <cassert>
 #include <godot_cpp/classes/character_body2d.hpp>
 #include <godot_cpp/classes/engine.hpp>
@@ -21,30 +21,30 @@ EntityManager::~EntityManager() = default;
 EntityId
 EntityManager::AddEnemy()
 {
-  EntityId id = data->enemiesCount;
+  EntityId id = game->Data.Entities.enemiesCount;
 
   godot::UtilityFunctions::print(
     id, " ", BehaviourLib::EntitiesData::MaxEnemyCount);
-  assert(id <= data->MaxEnemyCount);
+  assert(id <= game->Data.Entities.MaxEnemyCount);
 
-  EnemyView* e = data->enemyViews[id];
+  EnemyView* e = game->Data.Entities.enemyViews[id];
   e->set_visible(true);
   e->set_process_mode(Node::ProcessMode::PROCESS_MODE_INHERIT);
   add_child(e);
 
-  data->activeEnemies.push_back(id);
+  game->Data.Entities.activeEnemies.push_back(id);
 
-  data->enemiesCount++;
+  game->Data.Entities.enemiesCount++;
   return id;
 }
 
 EnemyView*
 EntityManager::GetEnemyView(EntityId id) const
 {
-  if (id > data->enemiesCount) {
+  if (id > game->Data.Entities.enemiesCount) {
     return nullptr;
   }
-  return data->enemyViews[id];
+  return game->Data.Entities.enemyViews[id];
 }
 
 bool
@@ -55,21 +55,26 @@ EntityManager::DeleteEnemy(EntityId id)
     return false;
   }
 
+  game->Data.Arena.enemiesKilled++;
+
+  godot::UtilityFunctions::print(
+    "+1 killed [", game->Data.Arena.enemiesKilled, "]");
   enemy->set_visible(false);
   enemy->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
-  data->availableIds.push(id);
+  game->Data.Entities.availableIds.push(id);
 
-  auto it = std::ranges::find(data->activeEnemies, id);
-  if (it == data->activeEnemies.end()) {
+  auto it = std::ranges::find(game->Data.Entities.activeEnemies, id);
+  if (it == game->Data.Entities.activeEnemies.end()) {
     return false;
   }
-  data->activeEnemies.erase(it);
+  game->Data.Entities.activeEnemies.erase(it);
 
-  auto movingItr = std::ranges::find(data->movingEnemies, id);
-  if (movingItr == data->movingEnemies.end()) {
+  auto movingItr = std::ranges::find(game->Data.Entities.movingEnemies, id);
+  if (movingItr == game->Data.Entities.movingEnemies.end()) {
     return false;
   }
-  data->movingEnemies.erase(movingItr);
+  game->Data.Entities.movingEnemies.erase(movingItr);
+
   return true;
 }
 
@@ -95,11 +100,11 @@ EntityManager::InitializeEntites()
     return;
   }
 
-  for (size_t i = 0; i < data->MaxEnemyCount; i++) {
+  for (size_t i = 0; i < game->Data.Entities.MaxEnemyCount; i++) {
     EnemyView* enemy = Object::cast_to<EnemyView>(enemyScene->instantiate());
     enemy->set_visible(false);
     enemy->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
-    data->enemyViews[i] = enemy;
+    game->Data.Entities.enemyViews[i] = enemy;
   }
 
   // INITIALIZE PLAYER UNITS
@@ -116,7 +121,7 @@ EntityManager::InitializeEntites()
       Object::cast_to<godot::CharacterBody2D>(playerUnitScene->instantiate());
     unit->set_visible(false);
     unit->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
-    data->playerUnitViews[i] = unit;
+    game->Data.Entities.playerUnitViews[i] = unit;
   }
 
   // INITIALIZE GROUP
@@ -127,25 +132,27 @@ EntityManager::InitializeEntites()
     godot::UtilityFunctions::print("Error: Failed to find Enemy scene");
     return;
   }
-  data->groupView = Object::cast_to<godot::Node2D>(groupScene->instantiate());
-  data->groupView->set_visible(false);
-  data->groupView->set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+  game->Data.Entities.groupView =
+    Object::cast_to<godot::Node2D>(groupScene->instantiate());
+  game->Data.Entities.groupView->set_visible(false);
+  game->Data.Entities.groupView->set_process_mode(
+    Node::ProcessMode::PROCESS_MODE_DISABLED);
 
   godot::TypedArray<godot::CharacterBody2D> arr{};
-  for (auto* unit : data->playerUnitViews) {
+  for (auto* unit : game->Data.Entities.playerUnitViews) {
     arr.push_back(unit);
   }
-  data->groupView->set("Units", arr);
+  game->Data.Entities.groupView->set("Units", arr);
 }
 
 void
 EntityManager::ActivatePlayerUnits()
 {
-  data->groupView->set_visible(true);
-  data->groupView->set_process_mode(PROCESS_MODE_INHERIT);
-  add_child(data->groupView);
+  game->Data.Entities.groupView->set_visible(true);
+  game->Data.Entities.groupView->set_process_mode(PROCESS_MODE_INHERIT);
+  add_child(game->Data.Entities.groupView);
 
-  for (auto& unit : data->playerUnitViews) {
+  for (auto& unit : game->Data.Entities.playerUnitViews) {
     unit->set_visible(true);
     unit->set_process_mode(PROCESS_MODE_INHERIT);
     add_child(unit);
@@ -159,8 +166,8 @@ EntityManager::_process(double delta)
     return;
   }
   godot::Vector<EntityId> freedIDs{};
-  for (EntityId unitId : data->activeEnemies) {
-    auto* enemy = data->enemyViews[unitId];
+  for (EntityId unitId : game->Data.Entities.activeEnemies) {
+    auto* enemy = game->Data.Entities.enemyViews[unitId];
     if (enemy->IsDead) {
       freedIDs.push_back(unitId);
     }

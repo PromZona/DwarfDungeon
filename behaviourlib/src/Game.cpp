@@ -40,7 +40,7 @@ void
 Game::PostRegisterManagers()
 {
   godot::UtilityFunctions::print("Game: Post Register Managers");
-  EntityManager->data = &Data.Entities;
+  EntityManager->game = this;
   MovementManager->gameData = &Data;
   BehaviourManager->game = this;
   SpawnManager->game = this;
@@ -57,10 +57,11 @@ Game::PreGameStart()
 }
 
 void
-Game::LoadScene(godot::String sceneName)
+Game::LoadScene(Levels level)
 {
   using namespace godot;
 
+  godot::String& sceneName = LevelPathTable[level];
   UtilityFunctions::print("Loading scene... : ", sceneName);
 
   Ref<PackedScene> scene = ResourceLoader::get_singleton()->load(sceneName);
@@ -113,7 +114,7 @@ Game::_ready()
   PostRegisterManagers();
   PreGameStart();
 
-  LoadScene("res://scenes/MainMenu.tscn");
+  LoadScene(Levels::Menu);
   godot::UtilityFunctions::print("Game: Initialization End");
 }
 
@@ -124,13 +125,17 @@ Game::_process(double delta)
     return;
   }
 
-  // PerformanceLogger.Print();
+  // PERFORMANCE LOGGER
   UIManager->DrawDebugInfo();
   PerformanceLogger.Clear();
-
   PERF("Game _process")
+  // PERFORMANCE LOGGER END
+
+  ProcessArena();
+  ProcessShop();
 
   BehaviourManager->Update(delta);
+  UIManager->Update();
 }
 
 void
@@ -151,21 +156,49 @@ Game::_input(const godot::Ref<godot::InputEvent>& event)
   if (eventKey == nullptr) {
     return;
   }
-
-  if (eventKey->get_keycode() == godot::KEY_1) {
-    LoadScene("res://scenes/Level_1.tscn");
-  } else if (eventKey->get_keycode() == godot::KEY_2) {
-    LoadScene("res://scenes/Level_2.tscn");
-  }
 }
 
 void
 Game::StartGame()
 {
-  LoadScene("res://scenes/Level_1.tscn");
-
+  EnterArena();
   EntityManager->ActivatePlayerUnits();
+}
+
+void
+Game::EnterShop()
+{
+  LoadScene(Levels::Shop);
+
+  Data.Spawn.isActive = false;
+  Data.IsArena = false;
+}
+
+void
+Game::EnterArena()
+{
+  LoadScene(Levels::Arena);
+
   Data.Spawn.isActive = true;
+  Data.IsArena = true;
+}
+
+void
+Game::ProcessArena()
+{
+  if (!Data.IsArena) {
+    return;
+  }
+
+  if (Data.Arena.enemiesKilled >= Data.Arena.enemiesKillGoal) {
+    // TODO: Clearing required. Stop active enemies. Zero-ing Arena variables
+    godot::UtilityFunctions::print("Game:ProcessArena - Before EnterShop");
+    EnterShop();
+  }
+}
+void
+Game::ProcessShop()
+{
 }
 
 } // namespace Behaviourlib
