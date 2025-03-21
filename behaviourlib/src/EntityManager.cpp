@@ -19,7 +19,7 @@ EntityManager::EntityManager() = default;
 EntityManager::~EntityManager() = default;
 
 EntityId
-EntityManager::AddEnemy()
+EntityManager::AddEnemy(godot::Vector2 position)
 {
   EntityId id = game->Data.Entities.enemiesCount;
 
@@ -28,12 +28,13 @@ EntityManager::AddEnemy()
   assert(id <= game->Data.Entities.MaxEnemyCount);
 
   EnemyView* e = game->Data.Entities.enemyViews[id];
+
+  e->set_global_position(position);
   e->set_visible(true);
   e->set_process_mode(Node::ProcessMode::PROCESS_MODE_INHERIT);
   add_child(e);
 
   game->Data.Entities.activeEnemies.push_back(id);
-
   game->Data.Entities.enemiesCount++;
   return id;
 }

@@ -79,9 +79,8 @@ SpawnManager::Spawn()
     game->Data.Spawn.spawnAreas[areaId]->get_global_position();
   godot::Vector2 spawn_position = { areaPosition.x + x, areaPosition.y + y };
 
-  EntityId id = game->EntityManager->AddEnemy();
+  EntityId id = game->EntityManager->AddEnemy(spawn_position);
   EnemyView* enemy = game->EntityManager->GetEnemyView(id);
-  enemy->set_global_position(spawn_position);
   enemy->IsDead = false;
 }
 

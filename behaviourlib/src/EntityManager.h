@@ -23,7 +23,7 @@ public:
   EntityManager();
   ~EntityManager() override;
 
-  EntityId AddEnemy();
+  EntityId AddEnemy(godot::Vector2 position = { 0, 0 });
   [[nodiscard]] EnemyView* GetEnemyView(EntityId id) const;
   bool DeleteEnemy(EntityId id);
 
