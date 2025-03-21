@@ -35,8 +35,12 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	return
 
-func group_center(unit_positions: Array[Vector2]) -> Vector2:
-	assert(unit_positions.size() == 4)
+func group_center() -> Vector2:
+	var unit_positions: Array[Vector2] = []
+	for unit: PlayerUnitView in Units:
+		unit_positions.append(unit.global_position)
+		
+	assert(unit_positions.size() == 4)	
 	var pair1: Vector2 = (unit_positions[0] + unit_positions[1]) / 2
 	var pair2: Vector2 = (unit_positions[2] + unit_positions[3]) / 2
 	var result: Vector2 = (pair1 + pair2) / 2
@@ -54,11 +58,9 @@ func move(_delta: float) -> void:
 		direction.y += 1.0
 	
 	direction = direction.normalized()
-	var unit_positions: Array[Vector2] = []
 	for unit: PlayerUnitView in Units:
 		unit.set_group_direction(direction)
-		unit_positions.append(unit.global_position)
-	var target_position:Vector2 = group_center(unit_positions)
+	var target_position:Vector2 = group_center()
 	position = target_position
 	return
 

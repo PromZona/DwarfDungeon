@@ -26,6 +26,7 @@ public:
   godot::Vector2 getFormationVelocity();
   godot::Vector2 getGroupVelocity();
   godot::Vector2 getGroupUnitsVelocity();
+  godot::Vector2 getKnockBackVelocity();
   godot::Vector2 getFinalVelocity();
   void ApplyDamage();
   void Attack();
@@ -48,19 +49,15 @@ public:
   godot::Node2D* AttackAreaHandler;
   godot::AnimationPlayer* AnimPlayer;
 
-  enum class State
-  {
-    Idle,
-    Move,
-    Attack
-  };
-
   // Unit scratch data
-  State CurrentState = State::Idle;
   godot::Marker2D* Target;
   godot::Vector2 GroupForceDirection;
   godot::Vector<godot::Area2D*> GroupUnitsTooClose;
   float PersonalSpaceRadius;
+  float KnockbackTime;
+  const float KnockbackMaxTime = 1.0f;
+  const float KnockbackDecaySpeed = 0.1f;
+  const float KnockbackForce = 100.0f;
 
   // Getters and setters (Thanks godot developers for forcing me to create 2
   // additional functions for each variable)

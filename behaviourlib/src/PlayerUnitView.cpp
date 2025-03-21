@@ -6,16 +6,19 @@
 #include "godot_cpp/classes/collision_shape2d.hpp"
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/classes/engine_debugger.hpp"
+#include "godot_cpp/classes/kinematic_collision2d.hpp"
 #include "godot_cpp/classes/object.hpp"
+#include "godot_cpp/classes/property_tweener.hpp"
 #include "godot_cpp/classes/shape_cast2d.hpp"
+#include "godot_cpp/classes/tween.hpp"
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/math.hpp"
 #include "godot_cpp/variant/color.hpp"
+#include "godot_cpp/variant/node_path.hpp"
 #include "godot_cpp/variant/typed_array.hpp"
 #include "godot_cpp/variant/utility_functions.hpp"
 #include "godot_cpp/variant/variant.hpp"
 #include "godot_cpp/variant/vector2.hpp"
-#include <algorithm>
 #include <cfloat>
 #include <cmath>
 
@@ -98,7 +101,17 @@ PlayerUnitView::_physics_process(double delta)
   if (godot::Engine::get_singleton()->is_editor_hint()) {
     return;
   }
-  move_and_collide(getFinalVelocity() * delta);
+  godot::Vector2 vel = getFinalVelocity();
+  godot::Ref<godot::KinematicCollision2D> col = move_and_collide(vel * delta);
+  if (col.is_valid()) {
+    KnockbackTime = KnockbackMaxTime;
+  }
+
+  if (KnockbackTime > 0.0f) {
+    KnockbackTime -= KnockbackDecaySpeed;
+    // godot::UtilityFunctions::print(
+    //   "[", get_name(), "]KBtime: ", KnockBackForceTime);
+  }
 }
 void
 PlayerUnitView::_draw()
@@ -173,9 +186,38 @@ PlayerUnitView::getGroupUnitsVelocity()
   return result;
 }
 
+float
+easeOutCubic(float x)
+{
+  return 1 - godot::Math::pow(1 - x, 3);
+}
+
+godot::Vector2
+PlayerUnitView::getKnockBackVelocity()
+{
+  godot::Vector2 result = { 0, 0 };
+
+  if (KnockbackTime <= 0.0f) {
+    return result;
+  }
+
+  godot::Node2D* group = get_parent()->get_node<godot::Node2D>("Group");
+  godot::Vector2 groupCenter = group->call("group_center");
+  godot::Vector2 dirToGroupCenter =
+    get_global_position().direction_to(groupCenter);
+  result = dirToGroupCenter *
+           (KnockbackForce * easeOutCubic(godot::Math::smoothstep(
+                               0.0f, KnockbackMaxTime, KnockbackTime)));
+  return result;
+}
+
 godot::Vector2
 PlayerUnitView::getFinalVelocity()
 {
+  if (KnockbackTime > 0.0f) {
+    return getKnockBackVelocity();
+  }
+
   // group force
   godot::Vector2 result = getGroupVelocity();
 
@@ -184,6 +226,10 @@ PlayerUnitView::getFinalVelocity()
 
   // unit force
   result += getGroupUnitsVelocity();
+
+  // Knockback force
+  // result += getKnockBackVelocity();
+
   return result;
 }
 
