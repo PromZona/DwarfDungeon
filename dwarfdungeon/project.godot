@@ -15,10 +15,6 @@ run/main_scene="res://main_scene.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
-[autoload]
-
-ImGuiRoot="*res://addons/imgui-godot/data/ImGuiRoot.tscn"
-
 [display]
 
 window/size/viewport_width=640
@@ -26,10 +22,6 @@ window/size/viewport_height=360
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep_width"
 window/stretch/scale_mode="integer"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/imgui-godot/plugin.cfg")
 
 [gui]
 
@@ -70,6 +62,11 @@ attack={
 [layer_names]
 
 2d_physics/layer_3="Unit To Unit"
+
+[physics]
+
+common/physics_jitter_fix=0.0
+common/physics_interpolation=true
 
 [rendering]
 

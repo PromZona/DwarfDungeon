@@ -6,9 +6,7 @@ extends Node2D
 
 @onready var Camera: Camera2D = get_viewport().get_camera_2d()
 
-enum GroupState {GroupIdle, GroupMoving, GroupAttack}
 var Positions: Array[Marker2D] = []
-var CurrentState: GroupState = GroupState.GroupIdle
 var GroupCenter: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
@@ -24,23 +22,13 @@ func _ready() -> void:
 	return
 
 func _input(event: InputEvent) -> void:
-	var is_moving: bool = false
-	is_moving = is_moving || event.is_action_pressed("move_left")
-	is_moving = is_moving || event.is_action_pressed("move_right")
-	is_moving = is_moving || event.is_action_pressed("move_up")
-	is_moving = is_moving || event.is_action_pressed("move_down")
-
-	if CurrentState == GroupState.GroupIdle && is_moving:
-		CurrentState = GroupState.GroupMoving
-	
 	if event.is_action_pressed("attack"):
 		return
 		# GDExtensionManager.reload_extension(GDExtensionManager.get_loaded_extensions()[0])
 	return
 
 func _process(delta: float) -> void:
-	if CurrentState == GroupState.GroupMoving:
-		move(delta)
+	move(delta)
 	rotate_with_mouse()
 	return
 
@@ -65,9 +53,6 @@ func move(_delta: float) -> void:
 	if Input.is_action_pressed("move_down"):
 		direction.y += 1.0
 	
-	if direction.is_zero_approx():
-		CurrentState = GroupState.GroupIdle
-
 	direction = direction.normalized()
 	var unit_positions: Array[Vector2] = []
 	for unit: PlayerUnitView in Units:

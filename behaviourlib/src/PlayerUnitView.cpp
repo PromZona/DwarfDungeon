@@ -5,10 +5,12 @@
 #include "godot_cpp/classes/circle_shape2d.hpp"
 #include "godot_cpp/classes/collision_shape2d.hpp"
 #include "godot_cpp/classes/engine.hpp"
+#include "godot_cpp/classes/engine_debugger.hpp"
 #include "godot_cpp/classes/object.hpp"
 #include "godot_cpp/classes/shape_cast2d.hpp"
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/core/math.hpp"
+#include "godot_cpp/variant/color.hpp"
 #include "godot_cpp/variant/typed_array.hpp"
 #include "godot_cpp/variant/utility_functions.hpp"
 #include "godot_cpp/variant/variant.hpp"
@@ -101,6 +103,12 @@ PlayerUnitView::_physics_process(double delta)
 void
 PlayerUnitView::_draw()
 {
+  // draw_line({ 0, 0 }, getFormationVelocity(), godot::Color::named("Red"));
+  // draw_line({ 0, 0 }, getGroupUnitsVelocity(), godot::Color::named("Green"));
+  // draw_line({ 0, 0 }, getGroupVelocity(), godot::Color::named("Magenta"));
+  // draw_line({ 0, 0 }, getFinalVelocity(), godot::Color::named("Black"));
+
+  // GODOT GDSCRIPT VERSTION
   // draw_line(Vector2.ZERO, formation_velocity(), Color.RED)
   // draw_line(Vector2.ZERO, group_units_velocity(), Color.GREEN)
   // draw_line(Vector2.ZERO, group_velocity(), Color.MAGENTA)
