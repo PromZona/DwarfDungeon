@@ -11,9 +11,10 @@ class EnemyView : public godot::CharacterBody2D
 {
   GDCLASS(EnemyView, godot::CharacterBody2D)
 public:
-  float MaxHealth = 100.0F;
+  float MaxHealth = 15.0F;
   float CurrentHealth = MaxHealth;
   float AttackRadius = 32.0F + 8.0F;
+  float Speed = 60.0f;
   bool IsDead = false;
 
   EnemyView();

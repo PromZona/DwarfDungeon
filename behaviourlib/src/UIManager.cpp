@@ -77,7 +77,7 @@ void
 UIManager::DrawDebugInfo()
 {
   godot::Label* debugTextLabel =
-    game->get_node<godot::Label>("Camera2D/Debug/Label");
+    game->get_node<godot::Label>("Camera2D/CanvasLayer/Debug/Label");
 
   debugTextLabel->set_text(PerformanceLogger.GetGodotString());
 }

@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dpd2w5jp63a4r"]
+[gd_scene load_steps=4 format=3 uid="uid://dpd2w5jp63a4r"]
 
 [ext_resource type="Script" uid="uid://su6vone3nvpc" path="res://scripts/group.gd" id="1_w71aj"]
+[ext_resource type="Texture2D" uid="uid://e5p3yhpvjyna" path="res://assets/fx/light_texture.png" id="2_fscdw"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_yrpif"]
 size = Vector2(10, 10)
@@ -8,38 +9,46 @@ size = Vector2(10, 10)
 [node name="Group" type="Node2D"]
 script = ExtResource("1_w71aj")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Body"]
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
-[node name="Position1" type="Marker2D" parent="."]
-position = Vector2(49, 0)
+[node name="Position1" type="Marker2D" parent="Body"]
+position = Vector2(32, 0)
 
-[node name="Sprite2D2" type="Sprite2D" parent="Position1"]
+[node name="Sprite2D2" type="Sprite2D" parent="Body/Position1"]
 visible = false
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
-[node name="Position2" type="Marker2D" parent="."]
-position = Vector2(26, 48)
+[node name="Position2" type="Marker2D" parent="Body"]
+position = Vector2(12, 32)
 
-[node name="d" type="Sprite2D" parent="Position2"]
+[node name="d" type="Sprite2D" parent="Body/Position2"]
 visible = false
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
-[node name="Position3" type="Marker2D" parent="."]
-position = Vector2(-49, 0)
+[node name="Position3" type="Marker2D" parent="Body"]
+position = Vector2(-32, 0)
 
-[node name="d2" type="Sprite2D" parent="Position3"]
+[node name="d2" type="Sprite2D" parent="Body/Position3"]
 visible = false
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
 
-[node name="Position4" type="Marker2D" parent="."]
-position = Vector2(21, -44)
+[node name="Position4" type="Marker2D" parent="Body"]
+position = Vector2(12, -32)
 
-[node name="d3" type="Sprite2D" parent="Position4"]
+[node name="d3" type="Sprite2D" parent="Body/Position4"]
 visible = false
 scale = Vector2(0.1, 0.1)
 texture = SubResource("PlaceholderTexture2D_yrpif")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(1, 0.784314, 0.796078, 1)
+texture = ExtResource("2_fscdw")
+texture_scale = 8.0
+height = 10.0

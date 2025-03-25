@@ -1,10 +1,10 @@
 [gd_scene load_steps=14 format=3 uid="uid://bkiifkjj3qjjd"]
 
-[ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="1_ucifp"]
+[ext_resource type="Texture2D" uid="uid://bcvidc43xt3g" path="res://assets/units/MainHero1.2LongHair.png" id="1_1xydb"]
 [ext_resource type="Texture2D" uid="uid://chnoj122dqx4b" path="res://assets/fx/swrod_fx.png" id="2_45tom"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3c11y"]
-size = Vector2(32, 32)
+[sub_resource type="CircleShape2D" id="CircleShape2D_1xydb"]
+radius = 8.0
 
 [sub_resource type="Gradient" id="Gradient_ppiuu"]
 offsets = PackedFloat32Array(0)
@@ -13,17 +13,17 @@ colors = PackedColorArray(1, 1, 1, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_ku8od"]
 gradient = SubResource("Gradient_ppiuu")
 width = 32
-height = 5
+height = 2
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_yteup"]
 gradient = SubResource("Gradient_ppiuu")
 width = 32
-height = 5
+height = 2
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_2hgbs"]
 gradient = SubResource("Gradient_ppiuu")
 width = 32
-height = 5
+height = 2
 
 [sub_resource type="Animation" id="Animation_5x7s2"]
 resource_name = "Attack"
@@ -162,18 +162,19 @@ atlas = ExtResource("2_45tom")
 [node name="Enemy" type="EnemyView"]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("1_ucifp")
+self_modulate = Color(0.971711, 0.746055, 0.770951, 1)
+texture = ExtResource("1_1xydb")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_3c11y")
+shape = SubResource("CircleShape2D_1xydb")
 
 [node name="HealthBar" type="TextureProgressBar" parent="."]
 modulate = Color(0.99614, 0, 0.23765, 1)
 offset_left = -16.0
-offset_top = -21.0
+offset_top = -16.0
 offset_right = 16.0
-offset_bottom = -16.0
+offset_bottom = -11.0
+scale = Vector2(0.96, 1)
 value = 60.0
 texture_under = SubResource("GradientTexture2D_ku8od")
 texture_over = SubResource("GradientTexture2D_yteup")
@@ -191,7 +192,8 @@ libraries = {
 
 [node name="AttackArea" type="ShapeCast2D" parent="AttackAreaHandler"]
 self_modulate = Color(0.8, 0.266667, 0.211765, 1)
-position = Vector2(20, 0)
+position = Vector2(17, 0)
+scale = Vector2(0.827721, 0.827758)
 shape = SubResource("RectangleShape2D_ix8yj")
 target_position = Vector2(0, 0)
 collision_mask = 2
@@ -201,6 +203,6 @@ visible = false
 texture_filter = 1
 position = Vector2(21, -0.999999)
 rotation = 0.785398
-scale = Vector2(3, 3)
+scale = Vector2(1.5, 1.5)
 texture = SubResource("AtlasTexture_a73ym")
 hframes = 6

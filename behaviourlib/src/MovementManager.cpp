@@ -1,5 +1,4 @@
 #include "MovementManager.h"
-#include "BehaviourManager.h"
 
 namespace BehaviourLib {
 
@@ -10,7 +9,6 @@ MovementManager::Update()
   const auto& brainBoards = gameData->Ai.boards;
   const auto& movingEnemies = gameData->Entities.movingEnemies;
   const auto& enemyViews = gameData->Entities.enemyViews;
-
 
   for (EntityId id : movingEnemies) {
     const UnitBlackBoard& board = brainBoards[id];
@@ -24,7 +22,7 @@ MovementManager::Update()
       playerUnits[board.target_unit_id];
     const godot::Vector2 direction =
       enemy->get_position().direction_to(target_unit->get_position());
-    enemy->set_velocity(direction * 10.0f);
+    enemy->set_velocity(direction * enemy->Speed);
     enemy->move_and_slide();
   }
 }

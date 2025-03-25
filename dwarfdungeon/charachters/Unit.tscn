@@ -1,22 +1,22 @@
 [gd_scene load_steps=11 format=3 uid="uid://chym3vdoe3mpi"]
 
-[ext_resource type="Texture2D" uid="uid://dex53d60jpht0" path="res://icon.svg" id="1_8gimr"]
+[ext_resource type="Texture2D" uid="uid://bcvidc43xt3g" path="res://assets/units/MainHero1.2LongHair.png" id="1_wn5sr"]
 [ext_resource type="Texture2D" uid="uid://chnoj122dqx4b" path="res://assets/fx/swrod_fx.png" id="3_253o4"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_qmh3a"]
-size = Vector2(32, 32)
+[sub_resource type="CircleShape2D" id="CircleShape2D_u1cir"]
+radius = 8.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n8vhh"]
-radius = 16.0
+radius = 12.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xy0eh"]
-size = Vector2(40, 48)
+size = Vector2(28, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wih0m"]
 atlas = ExtResource("3_253o4")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_wn5sr"]
-radius = 120.0
+radius = 80.0
 
 [sub_resource type="Animation" id="Animation_tu0db"]
 resource_name = "Attack"
@@ -98,12 +98,12 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 z_index = 1
-shape = SubResource("RectangleShape2D_qmh3a")
+shape = SubResource("CircleShape2D_u1cir")
+debug_color = Color(0, 0.6, 0.701961, 0.188235)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = -1
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("1_8gimr")
+texture = ExtResource("1_wn5sr")
 
 [node name="GroupMemberCollision" type="Area2D" parent="."]
 collision_layer = 4
@@ -111,22 +111,22 @@ collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GroupMemberCollision"]
 shape = SubResource("CircleShape2D_n8vhh")
-debug_color = Color(0.888025, 0.258221, 0.521158, 0.42)
+debug_color = Color(0.886275, 0.258824, 0.521569, 0.207843)
 
 [node name="AttackAreaHandler" type="Node2D" parent="."]
 
 [node name="AttackArea" type="ShapeCast2D" parent="AttackAreaHandler"]
 self_modulate = Color(0.8, 0.266667, 0.211765, 1)
-position = Vector2(20, 0)
+position = Vector2(14, 0)
 shape = SubResource("RectangleShape2D_xy0eh")
 target_position = Vector2(0, 0)
 
 [node name="AttackFx" type="Sprite2D" parent="AttackAreaHandler"]
 visible = false
 texture_filter = 1
-position = Vector2(21, -0.999999)
+position = Vector2(18, 0)
 rotation = 0.785398
-scale = Vector2(3, 3)
+scale = Vector2(1.5, 1.5)
 texture = SubResource("AtlasTexture_wih0m")
 hframes = 6
 

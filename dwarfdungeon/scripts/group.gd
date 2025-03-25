@@ -5,15 +5,17 @@ extends Node2D
 @export var Units: Array[CharacterBody2D]= []
 
 @onready var Camera: Camera2D = get_viewport().get_camera_2d()
+@onready var Light: PointLight2D = $PointLight2D
+@onready var Body: Node2D = $Body
 
 var Positions: Array[Marker2D] = []
 var GroupCenter: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
-	Positions.append($Position1)
-	Positions.append($Position2)
-	Positions.append($Position3)
-	Positions.append($Position4)
+	Positions.append($Body/Position1)
+	Positions.append($Body/Position2)
+	Positions.append($Body/Position3)
+	Positions.append($Body/Position4)
 	
 	var i: int = 0
 	for unit: PlayerUnitView in Units:
@@ -24,13 +26,15 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("attack"):
 		return
-		# GDExtensionManager.reload_extension(GDExtensionManager.get_loaded_extensions()[0])
 	return
 
 func _process(delta: float) -> void:
 	move(delta)
 	rotate_with_mouse()
 	return
+
+func _physics_process(delta: float) -> void:
+	Light.global_rotation = 0
 
 func _draw() -> void:
 	return
@@ -66,5 +70,5 @@ func move(_delta: float) -> void:
 
 func rotate_with_mouse() -> void:
 	var mouse_pos: Vector2 = Camera.get_global_mouse_position()
-	look_at(mouse_pos)
+	Body.look_at(mouse_pos)
 	return
